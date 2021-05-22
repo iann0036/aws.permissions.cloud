@@ -50,7 +50,7 @@ async function preprocess() {
             }
 
             $('#actions-table tbody').append('<tr>\
-                <td class="tx-pink" style="padding-left: 0px !important;">' + resource_type['resource_type'] + '</td>\
+                <td class="tx-pink" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>');
         }

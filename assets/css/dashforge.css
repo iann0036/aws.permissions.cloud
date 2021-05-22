@@ -13638,7 +13638,7 @@ textarea.parsley-success:focus {
     letter-spacing: .5px;
     text-transform: uppercase;
     color: #001737;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     display: block;
     transition: all 0.25s; }
     @media (prefers-reduced-motion: reduce) {
@@ -13703,7 +13703,7 @@ textarea.parsley-success:focus {
     display: flex;
     align-items: center;
     padding: 0;
-    height: 30px;
+    padding-bottom: 10px;
     color: rgba(27, 46, 75, 0.9);
     transition: all 0.25s; }
     @media (prefers-reduced-motion: reduce) {
