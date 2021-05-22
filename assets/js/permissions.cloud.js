@@ -17,7 +17,9 @@ async function preprocess() {
         }
     }
 
-    if (window.location.pathname.startsWith("/usingawsiam")) {
+    if (window.location.pathname == "/") {
+        $('#nav-general-dashboard').addClass('active');
+    } else if (window.location.pathname.startsWith("/usingawsiam")) {
         $('#nav-general-usingawsiam').addClass('active');
     } else if (window.location.pathname.startsWith("/privesc")) {
         $('#nav-general-privesc').addClass('active');
@@ -33,10 +35,10 @@ async function preprocess() {
         $('.display-api').attr('style', '');
     }
 
-    $('.link-iam').on('click', () => {
+    $('.iam-link').click(() => {
         window.location.pathname = window.location.pathname.replace("/api/", "/iam/");
     });
-    $('.link-api').on('click', () => {
+    $('.api-link').click(() => {
         window.location.pathname = window.location.pathname.replace("/iam/", "/api/");
     });
 
@@ -80,17 +82,21 @@ async function preprocess() {
 
         let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
+        let actionlink = "/iam/" + first_action['action'].split(":")[0];
+
         $('#methods-table tbody').append('<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
-            <td class="tx-pink">' + first_action['action'] + '</td>\
-            <td class="tx-medium">' + '-' + '</td>\
+            <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
+            <td class="tx-normal">' + '-' + '</td>\
         </tr>');
 
         for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+            let actionlink = "/iam/" + action['action'].split(":")[0];
+
             $('#methods-table tbody').append('<tr>\
-                <td class="tx-pink">' + action['action'] + '</td>\
-                <td class="tx-medium">' + '-' + '</td>\
+                <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
+                <td class="tx-normal">' + '-' + '</td>\
             </tr>');
         }
     }
