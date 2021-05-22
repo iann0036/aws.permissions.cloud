@@ -1,0 +1,171 @@
+.navbar-header {
+  border-bottom-color: transparent;
+  background-color: transparent;
+  background-image: linear-gradient(to right, #015de1 0, #560bdf 75%);
+  background-repeat: repeat-x; }
+  .navbar-header .df-logo, .navbar-header .df-logo:hover, .navbar-header .df-logo:focus {
+    color: #fff;
+    font-weight: 600; }
+    .navbar-header .df-logo span, .navbar-header .df-logo:hover span, .navbar-header .df-logo:focus span {
+      color: #00dbfd; }
+  .navbar-header .burger-menu {
+    color: rgba(255, 255, 255, 0.5); }
+    .navbar-header .burger-menu:hover, .navbar-header .burger-menu:focus {
+      color: #fff; }
+  .navbar-header .navbar-menu-header {
+    background-image: linear-gradient(to right, #015de1 0, #560bdf 75%);
+    background-repeat: repeat-x; }
+    .navbar-header .navbar-menu-header a:last-child {
+      color: rgba(255, 255, 255, 0.5); }
+      .navbar-header .navbar-menu-header a:last-child:hover, .navbar-header .navbar-menu-header a:last-child:focus {
+        color: #fff; }
+  @media (min-width: 992px) {
+    .navbar-header .nav-item.with-sub .nav-link::after {
+      border-color: rgba(255, 255, 255, 0.7); }
+    .navbar-header .nav-item.with-sub .nav-link:hover::after, .navbar-header .nav-item.with-sub .nav-link:focus::after {
+      border-color: #fff; } }
+  @media (min-width: 992px) {
+    .navbar-header .nav-item.active .nav-link {
+      color: #fff; } }
+  @media (min-width: 992px) {
+    .navbar-header .nav-item.active.with-sub .nav-link::after {
+      border-color: #fff; } }
+  @media (min-width: 992px) {
+    .navbar-header .nav-link {
+      color: rgba(255, 255, 255, 0.7); }
+      .navbar-header .nav-link:hover, .navbar-header .nav-link:focus {
+        color: #fff; } }
+  .navbar-header .navbar-right .search-link {
+    color: rgba(255, 255, 255, 0.7); }
+    .navbar-header .navbar-right .search-link:hover, .navbar-header .navbar-right .search-link:focus {
+      color: #fff; }
+  .navbar-header .navbar-menu-sub::before {
+    opacity: 0; }
+  .navbar-header .dropdown-notification .dropdown-link,
+  .navbar-header .dropdown-message .dropdown-link {
+    color: rgba(255, 255, 255, 0.7); }
+    .navbar-header .dropdown-notification .dropdown-link:hover, .navbar-header .dropdown-notification .dropdown-link:focus,
+    .navbar-header .dropdown-message .dropdown-link:hover,
+    .navbar-header .dropdown-message .dropdown-link:focus {
+      color: #fff; }
+  .navbar-header .dropdown-notification .dropdown-menu,
+  .navbar-header .dropdown-message .dropdown-menu {
+    margin-top: 19.5px; }
+    .navbar-header .dropdown-notification .dropdown-menu::before,
+    .navbar-header .dropdown-message .dropdown-menu::before {
+      opacity: 0; }
+  .navbar-header .dropdown-profile .dropdown-link:hover .avatar img, .navbar-header .dropdown-profile .dropdown-link:focus .avatar img {
+    background-color: rgba(255, 255, 255, 0.2); }
+  .navbar-header .dropdown-menu {
+    border-width: 0;
+    box-shadow: 0 0 8px 2px rgba(28, 39, 60, 0.1); }
+  .navbar-header .btn-social {
+    color: rgba(255, 255, 255, 0.5); }
+    .navbar-header .btn-social:hover, .navbar-header .btn-social:focus {
+      color: #fff; }
+  .navbar-header .btn-buy {
+    background-color: #0168fa;
+    color: #fff; }
+
+.aside.minimize .nav-aside .nav-label + .nav-item::before {
+  border-top-color: rgba(255, 255, 255, 0.12); }
+
+.aside-header {
+  background-color: #560bdf;
+  border-right-color: transparent; }
+  .aside-header .burger-menu {
+    color: rgba(255, 255, 255, 0.5); }
+    .aside-header .burger-menu:hover, .aside-header .burger-menu:focus {
+      color: #fff; }
+
+.aside-logo, .aside-logo:hover, .aside-logo:focus {
+  color: #fff; }
+  .aside-logo span, .aside-logo:hover span, .aside-logo:focus span {
+    color: #00dbfd; }
+
+.aside-menu-link {
+  color: rgba(255, 255, 255, 0.5); }
+  .aside-menu-link:hover, .aside-menu-link:focus {
+    color: #fff; }
+
+.aside-body {
+  border-top-width: 0;
+  background-image: linear-gradient(to bottom, #560bdf 20%, #015de1 100%);
+  background-repeat: repeat-x; }
+
+.aside-loggedin-user h6 {
+  color: #fff;
+  font-weight: 500; }
+
+.aside-loggedin-user p {
+  color: rgba(255, 255, 255, 0.5); }
+
+.aside-loggedin-user a {
+  color: rgba(255, 255, 255, 0.5); }
+  .aside-loggedin-user a:hover, .aside-loggedin-user a:focus {
+    color: #fff; }
+
+.aside-alert-link a {
+  color: rgba(255, 255, 255, 0.5); }
+  .aside-alert-link a:hover svg, .aside-alert-link a:focus svg {
+    color: #fff; }
+  .aside-alert-link a.new::before {
+    box-shadow: 0 0 0 2px #560bdf;
+    background-color: #08deff; }
+
+.nav-aside .nav-label {
+  color: #fff;
+  font-weight: 500; }
+
+.nav-aside .nav-item.active .nav-link {
+  color: #fff; }
+  .nav-aside .nav-item.active .nav-link::before {
+    bottom: 0;
+    top: 0;
+    border-left-color: rgba(255, 255, 255, 0.7);
+    border-left-width: 2px;
+    background-color: rgba(255, 255, 255, 0.08); }
+
+.nav-aside .nav-item.active svg {
+  color: #fff;
+  fill: rgba(255, 255, 255, 0.2); }
+
+.nav-aside .nav-item.with-sub.show .nav-link {
+  color: #fff; }
+  .nav-aside .nav-item.with-sub.show .nav-link svg {
+    color: #fff; }
+  .nav-aside .nav-item.with-sub.show .nav-link::before {
+    border-left-color: #fff; }
+
+.nav-aside .nav-item.with-sub ul li.active a {
+  color: #fff; }
+
+.nav-aside .nav-item.with-sub ul a {
+  color: rgba(200, 223, 255, 0.8); }
+  .nav-aside .nav-item.with-sub ul a:hover, .nav-aside .nav-item.with-sub ul a:focus {
+    color: #fff; }
+
+.nav-aside .nav-link {
+  color: rgba(255, 255, 255, 0.75); }
+  .nav-aside .nav-link svg {
+    color: rgba(255, 255, 255, 0.75);
+    stroke-width: 1.7px; }
+  .nav-aside .nav-link:hover, .nav-aside .nav-link:focus {
+    color: #fff; }
+
+@media (max-width: 991.98px) {
+  .content-header {
+    background-color: #560bdf;
+    background-image: linear-gradient(to right, #560bdf 20%, #015de1 100%);
+    background-repeat: repeat-x;
+    border-bottom-width: 0; }
+    .content-header .nav-link {
+      color: rgba(255, 255, 255, 0.7); }
+      .content-header .nav-link:hover, .content-header .nav-link:focus {
+        color: #fff; } }
+
+@media (max-width: 991.98px) {
+  .content-search svg {
+    color: #fff; }
+  .content-search .form-control:focus {
+    color: #fff; } }
