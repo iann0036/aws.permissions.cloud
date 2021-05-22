@@ -2,7 +2,7 @@ name: Publish permissions.cloud
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   deploy:
