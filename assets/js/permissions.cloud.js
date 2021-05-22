@@ -2,12 +2,16 @@ async function preprocess() {
     let iam_def_data = await fetch('/iam_definition.json');
     let iam_def = await iam_def_data.json();
     let service = iam_def[0];
-    
-    for (let service_def of iam_def) {
-        $('#reference-list').append('<li class="nav-item"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
 
-        if (window.location.pathname.startsWith("/iam/" + service_def['prefix'])) {
-            service = service_def;
+    $('#actions-table tbody').html('');
+    
+    if ($('#reference-list').html() == "") {
+        for (let service_def of iam_def) {
+            $('#reference-list').append('<li class="nav-item"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
+
+            if (window.location.pathname.startsWith("/iam/" + service_def['prefix'])) {
+                service = service_def;
+            }
         }
     }
 
