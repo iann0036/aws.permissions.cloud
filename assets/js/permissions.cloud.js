@@ -7,7 +7,7 @@ async function preprocess() {
     
     if ($('#reference-list').html() == "") {
         for (let service_def of iam_def) {
-            if (window.location.pathname.startsWith("/iam/" + service_def['prefix'])) {
+            if (window.location.pathname == "/iam/" + service_def['prefix']) {
                 service = service_def;
 
                 $('#reference-list').append('<li class="nav-item active"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
@@ -24,6 +24,21 @@ async function preprocess() {
     } else if (window.location.pathname.startsWith("/tooling")) {
         $('#nav-general-tooling').addClass('active');
     }
+
+    if (window.location.pathname.startsWith("/iam/")) {
+        $('.display-iam').attr('style', '');
+        $('.display-api').attr('style', 'display: none;');
+    } else if (window.location.pathname.startsWith("/api/")) {
+        $('.display-iam').attr('style', 'display: none;');
+        $('.display-api').attr('style', '');
+    }
+
+    $('.link-iam').on('click', () => {
+        window.location.pathname = window.location.pathname.replace("/api/", "/iam/");
+    });
+    $('.link-api').on('click', () => {
+        window.location.pathname = window.location.pathname.replace("/iam/", "/api/");
+    });
 
     for (let privilege of service['privileges']) {
         let first_resource_type = privilege['resource_types'].shift();
@@ -52,6 +67,30 @@ async function preprocess() {
             $('#actions-table tbody').append('<tr>\
                 <td class="tx-pink" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
+            </tr>');
+        }
+    }
+
+    let sdk_map_data = await fetch('/map.json');
+    let sdk_map = await sdk_map_data.json();
+
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+        let iam_mapping_name_parts = iam_mapping_name.split(".");
+        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
+
+        let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
+
+        $('#methods-table tbody').append('<tr>\
+            <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
+            <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
+            <td class="tx-pink">' + first_action['action'] + '</td>\
+            <td class="tx-medium">' + '-' + '</td>\
+        </tr>');
+
+        for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+            $('#methods-table tbody').append('<tr>\
+                <td class="tx-pink">' + action['action'] + '</td>\
+                <td class="tx-medium">' + '-' + '</td>\
             </tr>');
         }
     }
