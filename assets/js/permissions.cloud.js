@@ -7,12 +7,22 @@ async function preprocess() {
     
     if ($('#reference-list').html() == "") {
         for (let service_def of iam_def) {
-            $('#reference-list').append('<li class="nav-item"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
-
             if (window.location.pathname.startsWith("/iam/" + service_def['prefix'])) {
                 service = service_def;
+
+                $('#reference-list').append('<li class="nav-item active"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
+            } else {
+                $('#reference-list').append('<li class="nav-item"><a href="/iam/' + service_def['prefix'] + '" class="nav-link"><span>' + service_def['service_name'] + '</span></a></li>');
             }
         }
+    }
+
+    if (window.location.pathname.startsWith("/usingawsiam")) {
+        $('#nav-general-usingawsiam').addClass('active');
+    } else if (window.location.pathname.startsWith("/privesc")) {
+        $('#nav-general-privesc').addClass('active');
+    } else if (window.location.pathname.startsWith("/tooling")) {
+        $('#nav-general-tooling').addClass('active');
     }
 
     for (let privilege of service['privileges']) {
@@ -40,7 +50,7 @@ async function preprocess() {
             }
 
             $('#actions-table tbody').append('<tr>\
-                <td class="tx-pink">' + resource_type['resource_type'] + '</td>\
+                <td class="tx-pink" style="padding-left: 0px !important;">' + resource_type['resource_type'] + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>');
         }

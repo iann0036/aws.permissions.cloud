@@ -57,32 +57,11 @@
         </a>
       </div>
       <div class="aside-body">
-        <div class="aside-loggedin">
-          <div class="d-flex align-items-center justify-content-start">
-            <a href="" class="avatar"><img src="https://pbs.twimg.com/profile_images/833954217983307776/yPaJcQPr_400x400.jpg" class="rounded-circle" alt=""></a>
-            <div class="aside-alert-link">
-              <a href="" data-toggle="tooltip" title="Sign out"><i data-feather="log-out"></i></a>
-            </div>
-          </div>
-          <div class="aside-loggedin-user">
-            <a href="#loggedinMenu" class="d-flex align-items-center justify-content-between mg-b-2" data-toggle="collapse">
-              <h6 class="tx-semibold mg-b-0">Ian Mckay</h6>
-              <i data-feather="chevron-down"></i>
-            </a>
-            <p class="tx-color-03 tx-12 mg-b-0">Administrator</p>
-          </div>
-          <div class="collapse" id="loggedinMenu">
-            <ul class="nav nav-aside mg-b-0">
-              <li class="nav-item"><a href="" class="nav-link"><i data-feather="settings"></i> <span>Account Settings</span></a></li>
-              <li class="nav-item"><a href="" class="nav-link"><i data-feather="log-out"></i> <span>Sign Out</span></a></li>
-            </ul>
-          </div>
-        </div><!-- aside-loggedin -->
         <ul class="nav nav-aside">
           <li class="nav-label">General</li>
-          <li class="nav-item active"><a href="/" class="nav-link"><span>Using AWS IAM</span></a></li>
-          <li class="nav-item"><a href="/" class="nav-link"><span>Privilege Escalation</span></a></li>
-          <li class="nav-item"><a href="/" class="nav-link"><span>Security Tooling</span></a></li>
+          <li class="nav-item"><a id="nav-general-usingawsiam" href="/usingawsiam" class="nav-link"><span>Using AWS IAM</span></a></li>
+          <li class="nav-item"><a id="nav-general-privesc" href="/privesc" class="nav-link"><span>Privilege Escalation</span></a></li>
+          <li class="nav-item"><a id="nav-general-tooling" href="/tooling" class="nav-link"><span>Security Tooling</span></a></li>
           <li class="nav-label mg-t-25">Reference</li>
           <div id="reference-list"></div>
         </ul>
@@ -113,7 +92,7 @@
               <h4 class="mg-b-0 tx-spacing--1">Permissions Reference for <span class='servicename'></span></h4>
             </div>
             <div class="d-none d-md-block">
-              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Export to CSV</button>
+              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download CSV</button>
               <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5"><i data-feather="code" class="wd-10 mg-r-5"></i> Switch to API</button>
             </div>
           </div>
