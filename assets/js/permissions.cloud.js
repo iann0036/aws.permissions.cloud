@@ -100,7 +100,7 @@ async function getTemplates(action, iam_def) {
 async function getUsedBy(privilege, sdk_map) {
     let used_by_methods = [];
 
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
             if (action['action'] == privilege) {
                 used_by_methods.push(iam_mapping_name);
@@ -223,40 +223,48 @@ async function processReferencePage() {
     $('#actions-table tbody').append(actions_table_content);
 
     // get primary
-    let api_prefix = '';
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+    let api_prefixes = [];
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
 
-        if (first_action['action'].split(":")[0] == service['prefix']) {
-            api_prefix = iam_mapping_name.split(".")[0];
+        if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
+            api_prefixes.push(iam_mapping_name.split(".")[0]);
         }
     }
 
     let method_table_content = '';
     let api_count = 0;
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
-        if (iam_mapping_name_parts[0] == api_prefix) {
+        if (api_prefixes.includes(iam_mapping_name_parts[0])) {
             let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
 
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0];
             let template = await getTemplates(first_action, iam_def);
+            let undocumented = '';
+            if (first_action['undocumented']) {
+                undocumented = ' <span class="badge badge-danger">undocumented</span>';
+            }
 
             method_table_content += '<tr>\
                 <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
-                <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
+                <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
                 <td class="tx-medium">' + template + '</td>\
             </tr>';
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
                 let actionlink = "/iam/" + action['action'].split(":")[0];
                 let template = await getTemplates(action, iam_def);
+                let undocumented = '';
+                if (action['undocumented']) {
+                    undocumented = ' <span class="badge badge-danger">undocumented</span>';
+                }
 
                 method_table_content += '<tr>\
-                    <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
+                    <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + undocumented + '</a></td>\
                     <td class="tx-medium">' + template + '</td>\
                 </tr>';
             }
