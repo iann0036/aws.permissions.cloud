@@ -48,6 +48,7 @@ async function preprocess() {
         window.location.pathname = window.location.pathname.replace("/iam/", "/api/");
     });
 
+    let actions_table_content = '';
     for (let privilege of service['privileges']) {
         let first_resource_type = privilege['resource_types'].shift();
 
@@ -58,13 +59,13 @@ async function preprocess() {
 
         let rowspan = privilege['resource_types'].length + 1;
 
-        $('#actions-table tbody').append('<tr>\
+        actions_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-success">' + privilege['access_level'] + '</td>\
             <td class="tx-pink">' + first_resource_type['resource_type'] + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
-        </tr>');
+        </tr>';
 
         for (let resource_type of privilege['resource_types']) {
             let condition_keys = [];
@@ -72,16 +73,18 @@ async function preprocess() {
                 condition_keys.push('<a href="#">' + condition_key + '</a>');
             }
 
-            $('#actions-table tbody').append('<tr>\
+            actions_table_content += '<tr>\
                 <td class="tx-pink" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
-            </tr>');
+            </tr>';
         }
     }
+    $('#actions-table tbody').append(actions_table_content);
 
     let sdk_map_data = await fetch('/map.json');
     let sdk_map = await sdk_map_data.json();
 
+    let method_table_content = '';
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
         let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
@@ -90,22 +93,23 @@ async function preprocess() {
 
         let actionlink = "/iam/" + first_action['action'].split(":")[0];
 
-        $('#methods-table tbody').append('<tr>\
+        method_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
             <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
             <td class="tx-normal">' + '-' + '</td>\
-        </tr>');
+        </tr>';
 
         for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
             let actionlink = "/iam/" + action['action'].split(":")[0];
 
-            $('#methods-table tbody').append('<tr>\
+            method_table_content += '<tr>\
                 <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
                 <td class="tx-normal">' + '-' + '</td>\
-            </tr>');
+            </tr>';
         }
     }
+    $('#methods-table tbody').append(method_table_content);
 
     $('.servicename').html(service['service_name']);
     $('#iam-count').html(service['privileges'].length);
