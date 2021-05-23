@@ -34,6 +34,9 @@
 
     <title>Permissions Reference for AWS IAM | permissions.cloud</title>
 
+    <link rel="preload" href="/map.json" as="fetch" crossorigin>
+    <link rel="preload" href="/iam_definition.json" as="fetch" crossorigin>
+
     <!-- vendor css -->
     <link href="/lib/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
@@ -59,10 +62,9 @@
       <div class="aside-body">
         <ul class="nav nav-aside">
           <li class="nav-label">General</li>
-          <li class="nav-item"><a id="nav-general-dashboard" href="/" class="nav-link"><span>Dashboard</span></a></li>
-          <li class="nav-item"><a id="nav-general-usingawsiam" href="/usingawsiam" class="nav-link"><span>Using AWS IAM</span></a></li>
-          <li class="nav-item"><a id="nav-general-privesc" href="/privesc" class="nav-link"><span>Privilege Escalation</span></a></li>
-          <li class="nav-item"><a id="nav-general-tooling" href="/tooling" class="nav-link"><span>Security Tooling</span></a></li>
+          <li class="nav-item" id="nav-general-dashboard"><a href="/" class="nav-link"><span>Dashboard</span></a></li>
+          <li class="nav-item" id="nav-general-usage"><a href="/usage" class="nav-link"><span>Reference Usage</span></a></li>
+          <li class="nav-item" id="nav-general-tooling"><a href="/tooling" class="nav-link"><span>Security Tooling</span></a></li>
           <li class="nav-label mg-t-25">Reference</li>
           <div id="reference-list"></div>
         </ul>
@@ -76,11 +78,11 @@
           <input type="search" class="form-control" placeholder="Search...">
         </div>
         <nav class="nav">
-          <a href="https://github.com/iann0036/permissions.cloud" class="nav-link"><i data-feather="help-circle"></i></a>
+          <a href="/usage" class="nav-link"><i data-feather="help-circle"></i></a>
         </nav>
       </div><!-- content-header -->
 
-      <div class="content-body">
+      <div class="content-body" id="body-permissions" style="display: none;">
         <div class="container pd-x-0">
           <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
             <div>
@@ -219,6 +221,218 @@
           </div><!-- row -->
         </div><!-- container -->
       </div>
+
+      <div class="content-body" id="body-dashboard" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">General</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1">Dashboard</h4>
+            </div>
+          </div>
+
+          <div class="row row-xs">
+            <div class="col-lg-8 col-xl-7 mg-t-10">
+              <div class="card">
+                <div class="card-header pd-y-20 d-md-flex align-items-center justify-content-between">
+                  <h6 class="mg-b-0">Global AWS Counts</h6>
+                  <ul class="list-inline d-flex mg-t-20 mg-sm-t-10 mg-md-t-0 mg-b-0">
+                    <li class="list-inline-item d-flex align-items-center">
+                      <span class="d-block wd-10 ht-10 bg-df-1 rounded mg-r-5"></span>
+                      <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">CloudFormation Types</span>
+                    </li>
+                    <li class="list-inline-item d-flex align-items-center mg-l-5">
+                      <span class="d-block wd-10 ht-10 bg-df-2 rounded mg-r-5"></span>
+                      <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">API Methods</span>
+                    </li>
+                    <li class="list-inline-item d-flex align-items-center mg-l-5">
+                      <span class="d-block wd-10 ht-10 bg-df-3 rounded mg-r-5"></span>
+                      <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">IAM Permissions</span>
+                    </li>
+                  </ul>
+                </div><!-- card-header -->
+                <div class="card-body pos-relative pd-0">
+                  <div class="pos-absolute t-20 l-20 wd-xl-100p z-index-10">
+                    <div class="row">
+                      <div class="col-sm-5">
+                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5">9,135</h3>
+                        <h6 class="tx-uppercase tx-11 tx-spacing-1 tx-color-02 tx-semibold mg-b-10">API Methods</h6>
+                      </div><!-- col -->
+                      <div class="col-sm-5 mg-t-20 mg-sm-t-0">
+                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5">9,638</h3>
+                        <h6 class="tx-uppercase tx-11 tx-spacing-1 tx-color-02 tx-semibold mg-b-10">IAM Permissions</h6>
+                      </div><!-- col -->
+                    </div><!-- row -->
+                  </div>
+
+                  <div class="chart-one">
+                    <div id="flotChart" class="flot-chart"></div>
+                  </div><!-- chart-one -->
+                </div><!-- card-body -->
+              </div><!-- card -->
+            </div>
+            <div class="col-lg-4 col-xl-5 mg-t-10">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mg-b-0">Permissions by Access Level</h6>
+                </div><!-- card-header -->
+                <div class="card-body pd-lg-25">
+                  <div class="chart-seven"><canvas id="chartDonut"></canvas></div>
+                </div><!-- card-body -->
+                <div class="card-footer pd-20">
+                  <div class="row">
+                    <div class="col-6">
+                      <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 tx-nowrap mg-b-5">List</p>
+                      <div class="d-flex align-items-center">
+                        <div class="wd-10 ht-10 rounded-circle bg-pink mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0">1,320 <small class="tx-color-04">25%</small></h6>
+                      </div>
+                    </div><!-- col -->
+                    <div class="col-6">
+                      <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Read</p>
+                      <div class="d-flex align-items-center">
+                        <div class="wd-10 ht-10 rounded-circle bg-primary mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0">987 <small class="tx-color-04">20%</small></h6>
+                      </div>
+                    </div><!-- col -->
+                    <div class="col-6 mg-t-20">
+                      <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Write</p>
+                      <div class="d-flex align-items-center">
+                        <div class="wd-10 ht-10 rounded-circle bg-teal mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0">2,010 <small class="tx-color-04">30%</small></h6>
+                      </div>
+                    </div><!-- col -->
+                    <div class="col-6 mg-t-20">
+                      <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Permissions management</p>
+                      <div class="d-flex align-items-center">
+                        <div class="wd-10 ht-10 rounded-circle bg-orange mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0">1,054 <small class="tx-color-04">25%</small></h6>
+                      </div>
+                    </div><!-- col -->
+                  </div><!-- row -->
+                </div><!-- card-footer -->
+              </div><!-- card -->
+            </div>
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
+
+      <div class="content-body" id="body-usage" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">General</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Reference Usage</li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1">Reference Usage</h4>
+            </div>
+          </div>
+
+          <div class="row row-xs">
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card card-body">
+                <p class="df-lead">blahblah.</p>
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+
+                <div class="table-responsive mg-t-25">
+                  <table class="table table-components">
+                    <thead>
+                      <tr>
+                        <th class="wd-40p">blahblah</th>
+                        <th class="wd-60p">blahblah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>blahblah</td>
+                        <td>blahblah</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+              </div>
+            </div><!-- col -->
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
+
+      <div class="content-body" id="body-tooling" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">General</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Security Tooling</li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1">Security Tooling</h4>
+            </div>
+          </div>
+
+          <div class="row row-xs">
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card card-body">
+                <p class="df-lead">blahblah.</p>
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+
+                <div class="table-responsive mg-t-25">
+                  <table class="table table-components">
+                    <thead>
+                      <tr>
+                        <th class="wd-40p">blahblah</th>
+                        <th class="wd-60p">blahblah</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>blahblah</td>
+                        <td>blahblah</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">blahblah</h4>
+                <p class="mg-b-30">blahblah.</p>
+              </div>
+            </div><!-- col -->
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
     </div>
 
     <!-- Modal -->
@@ -249,6 +463,7 @@
 
     <script src="/assets/js/dashforge.js"></script>
     <script src="/assets/js/dashforge.aside.js"></script>
+    <script src="/assets/js/dashforge.sampledata.js"></script>
 
     <!-- main app -->
     <script src="/assets/js/permissions.cloud.js"></script>

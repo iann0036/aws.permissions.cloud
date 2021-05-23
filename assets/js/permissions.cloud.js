@@ -1,17 +1,24 @@
 // permissions.cloud Core Functionality
 
-function arnReplace(arn, action, resource_mapping_sub) {
-    arn = arn.replace(/\$\{(Partition)\}/g, '<span class="tx-semibold tx-gray-500">aws</span>');
-    arn = arn.replace(/\$\{(Region)\}/g, '<span class="tx-semibold tx-gray-500">us-east-1</span>');
-    arn = arn.replace(/\$\{(Account)\}/g, '<span class="tx-semibold tx-gray-500">123456789012</span>');
-
+function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
     if (action['resource_mappings'] && resource_mapping_sub) {
+        if (resource_type_name && action['resourcearn_mappings']) {
+            for (var resourcearn_mapping_name of Object.keys(action['resourcearn_mappings'])) {
+                arn = '<a class="tx-semibold" href="#" data-toggle="modal" data-target="#resourceTypeModal">' + templateReplace(action['resourcearn_mappings'][resourcearn_mapping_name], action, false) + '</a>';
+            }
+        }
+
         for (var resource_mapping_name of Object.keys(action['resource_mappings'])) {
             arn = arn.replace(new RegExp('\\$\\{(' + resource_mapping_name + ')\\}', 'g'), '<a class="tx-semibold" href="#" data-toggle="modal" data-target="#resourceTypeModal">' + templateReplace(action['resource_mappings'][resource_mapping_name]['template'], action, false) + '</a>');
         }
     }
 
+    arn = arn.replace(/\$\{(Partition)\}/g, '<span class="tx-semibold tx-gray-500">aws</span>');
+    arn = arn.replace(/\$\{(Region)\}/g, '<span class="tx-semibold tx-gray-500">us-east-1</span>');
+    arn = arn.replace(/\$\{(Account)\}/g, '<span class="tx-semibold tx-gray-500">123456789012</span>');
+
     arn = arn.replace(/\$\{(.+?)\}/g, '<a class="tx-semibold" href="#" data-toggle="modal" data-target="#resourceTypeModal">$1</a>');
+    //arn = arn.replace(/\$\{(.+?)\}/g, '<span class="tx-semibold">$1</span>');
 
     return arn;
 }
@@ -21,33 +28,35 @@ function templateReplace(arn, action, resource_mapping_sub) {
         let arn_parts = arn.split("%");
         let else_ext = '';
         if (arn_parts[5] != "") {
-            else_ext = ' <span class="badge badge-info">otherwise</span> ' + arnReplace(arn_parts[5], action, resource_mapping_sub);
+            else_ext = ' <span class="badge badge-info">otherwise</span> ' + arnReplace(arn_parts[5], action, resource_mapping_sub, null);
         }
 
-        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">if exists</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub) + ' <span class="badge badge-info">then</span> ' + arnReplace(arn_parts[4], action, resource_mapping_sub) + else_ext;
+        return arnReplace(arn_parts[0], action, resource_mapping_sub, null) + '<span class="badge badge-info">if truthy</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub, null) + ' <span class="badge badge-info">then</span> ' + arnReplace(arn_parts[4], action, resource_mapping_sub, null) + else_ext;
     } else if (arn.includes("%%many%")) {
         let arn_parts = arn.split("%");
         let many_instances = [];
         for (let i=3; i<arn_parts.length-2; i++) {
-            many_instances.push(arnReplace(arn_parts[i], action, resource_mapping_sub));
+            many_instances.push(arnReplace(arn_parts[i], action, resource_mapping_sub, null));
         }
 
-        return arnReplace(arn_parts[0], action, resource_mapping_sub) + many_instances.join("<br />");
+        many_instances = [...new Set(many_instances)]; // dedupe
+
+        return arnReplace(arn_parts[0], action, resource_mapping_sub, null) + many_instances.join("<br />");
     } else if (arn.includes("%%urlencode%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">urlencode</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub);
+        return arnReplace(arn_parts[0], action, resource_mapping_sub, null) + '<span class="badge badge-info">urlencode</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub, null);
     } else if (arn.includes("%%iftemplatematch%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">if ARN matches format</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub);
+        return arnReplace(arn_parts[0], action, resource_mapping_sub, null) + '<span class="badge badge-info">if ARN matches format</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub, null);
     } else if (arn.includes("%%regex%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">for the property</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub) + ' <span class="badge badge-info">get first match of the regex pattern</span> ' + arn_parts[4];
+        return arnReplace(arn_parts[0], action, resource_mapping_sub, null) + '<span class="badge badge-info">for the property</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub, null) + ' <span class="badge badge-info">get first match of the regex pattern</span> ' + arn_parts[4];
     }
 
-    return arnReplace(arn, action, resource_mapping_sub);
+    return arnReplace(arn, action, resource_mapping_sub, null);
 }
 
 async function getTemplates(action, iam_def) {
@@ -67,7 +76,7 @@ async function getTemplates(action, iam_def) {
                                 resource_type_name = resource_type['resource_type'].replace("*", "");
                                 for (let resource of service_def['resources']) {
                                     if (resource['resource'] == resource_type_name) {
-                                        let arn = arnReplace(resource['arn'], action, true);
+                                        let arn = arnReplace(resource['arn'], action, true, resource_type_name);
 
                                         templates.push(arn);
                                     }
@@ -81,6 +90,7 @@ async function getTemplates(action, iam_def) {
     }
 
     if (templates.length) {
+        templates = [...new Set(templates)]; // dedupe
         ret = templates.join("<br />");
     }
 
@@ -135,14 +145,23 @@ async function processReferencePage() {
         }
     }
 
+    $('#body-dashboard').attr('style', 'display: none;');
+    $('#body-usage').attr('style', 'display: none;');
+    $('#body-tooling').attr('style', 'display: none;');
+    $('#body-permissions').attr('style', 'display: none;');
     if (window.location.pathname == "/") {
         $('#nav-general-dashboard').addClass('active');
-    } else if (window.location.pathname.startsWith("/usingawsiam")) {
-        $('#nav-general-usingawsiam').addClass('active');
-    } else if (window.location.pathname.startsWith("/privesc")) {
-        $('#nav-general-privesc').addClass('active');
+        $('#body-dashboard').attr('style', '');
+    } else if (window.location.pathname.startsWith("/usage")) {
+        $('#nav-general-usage').addClass('active');
+        $('#body-usage').attr('style', '');
     } else if (window.location.pathname.startsWith("/tooling")) {
         $('#nav-general-tooling').addClass('active');
+        $('#body-tooling').attr('style', '');
+    } else if (window.location.pathname.startsWith("/iam") || window.location.pathname.startsWith("/api")) {
+        $('#body-permissions').attr('style', '');
+    } else {
+        // TODO
     }
 
     if (window.location.pathname.startsWith("/iam/")) {
