@@ -1,46 +1,53 @@
 // permissions.cloud Core Functionality
 
-function arnReplace(arn) {
+function arnReplace(arn, action, resource_mapping_sub) {
     arn = arn.replace(/\$\{(Partition)\}/g, '<span class="tx-semibold tx-gray-500">aws</span>');
     arn = arn.replace(/\$\{(Region)\}/g, '<span class="tx-semibold tx-gray-500">us-east-1</span>');
     arn = arn.replace(/\$\{(Account)\}/g, '<span class="tx-semibold tx-gray-500">123456789012</span>');
+
+    if (action['resource_mappings'] && resource_mapping_sub) {
+        for (var resource_mapping_name of Object.keys(action['resource_mappings'])) {
+            arn = arn.replace(new RegExp('\\$\\{(' + resource_mapping_name + ')\\}', 'g'), '<a class="tx-semibold" href="#" data-toggle="modal" data-target="#resourceTypeModal">' + templateReplace(action['resource_mappings'][resource_mapping_name]['template'], action, false) + '</a>');
+        }
+    }
+
     arn = arn.replace(/\$\{(.+?)\}/g, '<a class="tx-semibold" href="#" data-toggle="modal" data-target="#resourceTypeModal">$1</a>');
 
     return arn;
 }
 
-function overrideReplace(arn) {
+function templateReplace(arn, action, resource_mapping_sub) {
     if (arn.includes("%%iftruthy%")) {
         let arn_parts = arn.split("%");
         let else_ext = '';
         if (arn_parts[5] != "") {
-            else_ext = ' <span class="badge badge-info">otherwise</span> ' + arnReplace(arn_parts[5]);
+            else_ext = ' <span class="badge badge-info">otherwise</span> ' + arnReplace(arn_parts[5], action, resource_mapping_sub);
         }
 
-        return arnReplace(arn_parts[0]) + '<span class="badge badge-info">if exists</span> ' + arnReplace(arn_parts[3]) + ' <span class="badge badge-info">then</span> ' + arnReplace(arn_parts[4]) + else_ext + ' <span class="badge badge-dark">overriden</span>';
+        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">if exists</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub) + ' <span class="badge badge-info">then</span> ' + arnReplace(arn_parts[4], action, resource_mapping_sub) + else_ext;
     } else if (arn.includes("%%many%")) {
         let arn_parts = arn.split("%");
         let many_instances = [];
         for (let i=3; i<arn_parts.length-2; i++) {
-            many_instances.push(arnReplace(arn_parts[i]));
+            many_instances.push(arnReplace(arn_parts[i], action, resource_mapping_sub));
         }
 
-        return arnReplace(arn_parts[0]) + many_instances.join("<br />") + ' <span class="badge badge-dark">overriden</span>';
+        return arnReplace(arn_parts[0], action, resource_mapping_sub) + many_instances.join("<br />");
     } else if (arn.includes("%%urlencode%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0]) + '<span class="badge badge-info">urlencode</span> ' + arnReplace(arn_parts[3]) + ' <span class="badge badge-dark">overriden</span>';
+        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">urlencode</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub);
     } else if (arn.includes("%%iftemplatematch%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0]) + '<span class="badge badge-info">if ARN matches format</span> ' + arnReplace(arn_parts[3]) + ' <span class="badge badge-dark">overriden</span>';
+        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">if ARN matches format</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub);
     } else if (arn.includes("%%regex%")) {
         let arn_parts = arn.split("%");
 
-        return arnReplace(arn_parts[0]) + '<span class="badge badge-info">for the property</span> ' + arnReplace(arn_parts[3]) + ' <span class="badge badge-info">get $1 of the regex pattern</span> ' + arn_parts[4] + ' <span class="badge badge-dark">overriden</span>';
+        return arnReplace(arn_parts[0], action, resource_mapping_sub) + '<span class="badge badge-info">for the property</span> ' + arnReplace(arn_parts[3], action, resource_mapping_sub) + ' <span class="badge badge-info">get first match of the regex pattern</span> ' + arn_parts[4];
     }
 
-    return arnReplace(arn) + ' <span class="badge badge-dark">overriden</span>';
+    return arnReplace(arn, action, resource_mapping_sub);
 }
 
 async function getTemplates(action, iam_def) {
@@ -49,7 +56,7 @@ async function getTemplates(action, iam_def) {
     let templates = [];
 
     if (action['arn_override']) {
-        templates.push(overrideReplace(action['arn_override']['template']));
+        templates.push(templateReplace(action['arn_override']['template'], action, true) + ' <span class="badge badge-dark">overriden</span>');
     } else {
         for (let service_def of iam_def) {
             if (service_def['prefix'] == action_parts[0]) {
@@ -60,7 +67,7 @@ async function getTemplates(action, iam_def) {
                                 resource_type_name = resource_type['resource_type'].replace("*", "");
                                 for (let resource of service_def['resources']) {
                                     if (resource['resource'] == resource_type_name) {
-                                        let arn = arnReplace(resource['arn']);
+                                        let arn = arnReplace(resource['arn'], action, true);
 
                                         templates.push(arn);
                                     }
