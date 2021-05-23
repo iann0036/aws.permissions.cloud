@@ -16,10 +16,10 @@ async function getTemplates(action, iam_def) {
                                 if (resource['resource'] == resource_type_name) {
                                     let arn = resource['arn'];
 
-                                    arn = arn.replace(/\$\{(Partition)\}/g, '<span class="badge badge-pill badge-secondary">aws</span>');
-                                    arn = arn.replace(/\$\{(Region)\}/g, '<span class="badge badge-pill badge-secondary">us-east-1</span>');
-                                    arn = arn.replace(/\$\{(Account)\}/g, '<span class="badge badge-pill badge-secondary">123456789012</span>');
-                                    arn = arn.replace(/\$\{(.+?)\}/g, '<span class="badge badge-pill badge-info">$1</span>');
+                                    arn = arn.replace(/\$\{(Partition)\}/g, '<span class="tx-semibold tx-gray-500">aws</span>');
+                                    arn = arn.replace(/\$\{(Region)\}/g, '<span class="tx-semibold tx-gray-500">us-east-1</span>');
+                                    arn = arn.replace(/\$\{(Account)\}/g, '<span class="tx-semibold tx-gray-500">123456789012</span>');
+                                    arn = arn.replace(/\$\{(.+?)\}/g, '<span class="tx-semibold tx-info">$1</span>');
 
                                     templates.push(arn);
                                 }
@@ -38,10 +38,31 @@ async function getTemplates(action, iam_def) {
     return ret;
 }
 
+async function getUsedBy(privilege, sdk_map) {
+    let used_by_methods = [];
+
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+        for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+            if (action['action'] == privilege) {
+                used_by_methods.push(iam_mapping_name);
+            }
+        }
+    }
+
+    if (used_by_methods.length) {
+        return used_by_methods.join("<br />");
+    }
+
+    return '-';
+}
+
 async function preprocess() {
     let iam_def_data = await fetch('/iam_definition.json');
     let iam_def = await iam_def_data.json();
     let service = iam_def[0];
+
+    let sdk_map_data = await fetch('/map.json');
+    let sdk_map = await sdk_map_data.json();
 
     $('#actions-table tbody').html('');
     
@@ -106,8 +127,8 @@ async function preprocess() {
             access_class = "tx-pink";
         }
 
-        let used_by = '-';
-
+        let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+        
         actions_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
@@ -130,9 +151,6 @@ async function preprocess() {
         }
     }
     $('#actions-table tbody').append(actions_table_content);
-
-    let sdk_map_data = await fetch('/map.json');
-    let sdk_map = await sdk_map_data.json();
 
     // get primary
     let api_prefix = '';
