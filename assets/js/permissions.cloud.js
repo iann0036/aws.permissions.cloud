@@ -16,10 +16,10 @@ async function getTemplates(action, iam_def) {
                                 if (resource['resource'] == resource_type_name) {
                                     let arn = resource['arn'];
 
-                                    arn.replace(/\$\{(Partition)\}/g, '<span class="badge badge-pill badge-secondary">aws</span>');
-                                    arn.replace(/\$\{(Region)\}/g, '<span class="badge badge-pill badge-secondary">us-east-1</span>');
-                                    arn.replace(/\$\{(Account)\}/g, '<span class="badge badge-pill badge-secondary">123456789012</span>');
-                                    arn.replace(/\$\{(.+?)\}/g, '<span class="badge badge-pill badge-info">$1</span>');
+                                    arn = arn.replace(/\$\{(Partition)\}/g, '<span class="badge badge-pill badge-secondary">aws</span>');
+                                    arn = arn.replace(/\$\{(Region)\}/g, '<span class="badge badge-pill badge-secondary">us-east-1</span>');
+                                    arn = arn.replace(/\$\{(Account)\}/g, '<span class="badge badge-pill badge-secondary">123456789012</span>');
+                                    arn = arn.replace(/\$\{(.+?)\}/g, '<span class="badge badge-pill badge-info">$1</span>');
 
                                     templates.push(arn);
                                 }
