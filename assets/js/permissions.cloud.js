@@ -111,7 +111,7 @@ async function preprocess() {
         actions_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
-            <td class="tx-normal">' + used_by + '</td>\
+            <td rowspan="' + rowspan + '" class="tx-normal">' + used_by + '</td>\
             <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
             <td class="tx-normal">' + first_resource_type['resource_type'] + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
