@@ -118,11 +118,11 @@ async function getUsedBy(privilege, sdk_map) {
 }
 
 async function processReferencePage() {
-    let iam_def_data = await fetch('/iam_definition.json');
+    let iam_def_data = await fetch('https://iann0036.github.io/sdk-iam-map/js/iam_definition.json');
     let iam_def = await iam_def_data.json();
     let service = iam_def[0];
 
-    let sdk_map_data = await fetch('/map.json');
+    let sdk_map_data = await fetch('https://iann0036.github.io/sdk-iam-map/map.json');
     let sdk_map = await sdk_map_data.json();
 
     $('#actions-table tbody').html('');
