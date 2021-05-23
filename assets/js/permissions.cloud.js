@@ -101,12 +101,19 @@ async function preprocess() {
         }
 
         let rowspan = privilege['resource_types'].length + 1;
+        let access_class = "tx-success";
+        if (["Write", "Permissions management"].includes(privilege['access_level'])) {
+            access_class = "tx-pink";
+        }
+
+        let used_by = '-';
 
         actions_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
-            <td rowspan="' + rowspan + '" class="tx-success">' + privilege['access_level'] + '</td>\
-            <td class="tx-pink">' + first_resource_type['resource_type'] + '</td>\
+            <td class="tx-normal">' + used_by + '</td>\
+            <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
+            <td class="tx-normal">' + first_resource_type['resource_type'] + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
         </tr>';
 
@@ -153,7 +160,7 @@ async function preprocess() {
                 <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
                 <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
-                <td class="tx-normal">' + template + '</td>\
+                <td class="tx-medium">' + template + '</td>\
             </tr>';
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
@@ -162,7 +169,7 @@ async function preprocess() {
 
                 method_table_content += '<tr>\
                     <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
-                    <td class="tx-normal">' + template + '</td>\
+                    <td class="tx-medium">' + template + '</td>\
                 </tr>';
             }
 
