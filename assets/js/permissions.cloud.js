@@ -87,7 +87,7 @@ async function preprocess() {
     // get primary
     let api_prefix = '';
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
-        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
+        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
 
         if (first_action['action'].split(":")[0] == service['prefix']) {
             api_prefix = iam_mapping_name.split(".")[0];
