@@ -124,7 +124,7 @@ async function preprocess() {
             }
 
             actions_table_content += '<tr>\
-                <td class="tx-pink" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
+                <td class="tx-normal" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>';
         }
