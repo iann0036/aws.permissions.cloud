@@ -84,29 +84,41 @@ async function preprocess() {
     let sdk_map_data = await fetch('/map.json');
     let sdk_map = await sdk_map_data.json();
 
+    // get primary
+    let api_prefix = '';
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
+
+        if (first_action['action'].split(":")[0] == service['prefix']) {
+            api_prefix = iam_mapping_name.split(".")[0];
+        }
+    }
+
     let method_table_content = '';
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
-        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
+        if (iam_mapping_name_parts[0] == api_prefix) {
+            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
 
-        let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
+            let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
-        let actionlink = "/iam/" + first_action['action'].split(":")[0];
-
-        method_table_content += '<tr>\
-            <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
-            <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
-            <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
-            <td class="tx-normal">' + '-' + '</td>\
-        </tr>';
-
-        for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
-            let actionlink = "/iam/" + action['action'].split(":")[0];
+            let actionlink = "/iam/" + first_action['action'].split(":")[0];
 
             method_table_content += '<tr>\
-                <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
+                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
+                <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
                 <td class="tx-normal">' + '-' + '</td>\
             </tr>';
+
+            for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+                let actionlink = "/iam/" + action['action'].split(":")[0];
+
+                method_table_content += '<tr>\
+                    <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
+                    <td class="tx-normal">' + '-' + '</td>\
+                </tr>';
+            }
         }
     }
     $('#methods-table tbody').append(method_table_content);
