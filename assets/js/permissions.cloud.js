@@ -1,3 +1,36 @@
+// permissions.cloud Core Functionality
+
+async function getTemplates(action, iam_def) {
+    let action_parts = action.split(":");
+    let ret = '*';
+    let templates = [];
+
+    for (let service_def of iam_def) {
+        if (service_def['prefix'] == action_parts[0]) {
+            for (let privilege of service_def['privileges']) {
+                if (privilege['privilege'] == action_parts[1]) {
+                    for (let resource_type of privilege['resource_types']) {
+                        if (resource_type['resource_type'] != "") {
+                            resource_type_name = resource_type['resource_type'].replace("*", "");
+                            for (let resource of service_def['resources']) {
+                                if (resource['resource'] == resource_type_name) {
+                                    templates.push(resource['arn']);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (templates.length) {
+        ret = templates.join("<br />");
+    }
+
+    return ret;
+}
+
 async function preprocess() {
     let iam_def_data = await fetch('/iam_definition.json');
     let iam_def = await iam_def_data.json();
@@ -40,6 +73,9 @@ async function preprocess() {
         $('.display-iam').attr('style', 'display: none;');
         $('.display-api').attr('style', '');
     }
+
+    $('.servicename').html(service['service_name']);
+    $('#iam-count').html(service['privileges'].length);
 
     $('.iam-link').click(() => {
         window.location.pathname = window.location.pathname.replace("/api/", "/iam/");
@@ -95,6 +131,7 @@ async function preprocess() {
     }
 
     let method_table_content = '';
+    let api_count = 0;
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
         if (iam_mapping_name_parts[0] == api_prefix) {
@@ -113,18 +150,20 @@ async function preprocess() {
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
                 let actionlink = "/iam/" + action['action'].split(":")[0];
+                let template = await getTemplates(action['action'], iam_def);
 
                 method_table_content += '<tr>\
                     <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + '</a></td>\
-                    <td class="tx-normal">' + '-' + '</td>\
+                    <td class="tx-normal">' + template + '</td>\
                 </tr>';
             }
+
+            api_count += 1;
         }
     }
-    $('#methods-table tbody').append(method_table_content);
 
-    $('.servicename').html(service['service_name']);
-    $('#iam-count').html(service['privileges'].length);
+    $('#api-count').html(api_count);
+    $('#methods-table tbody').append(method_table_content);
 }
 
 preprocess();
