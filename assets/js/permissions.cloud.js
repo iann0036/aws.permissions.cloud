@@ -14,7 +14,14 @@ async function getTemplates(action, iam_def) {
                             resource_type_name = resource_type['resource_type'].replace("*", "");
                             for (let resource of service_def['resources']) {
                                 if (resource['resource'] == resource_type_name) {
-                                    templates.push(resource['arn']);
+                                    let arn = resource['arn'];
+
+                                    arn.replace(/\$\{(Partition)\}/g, '<span class="badge badge-pill badge-secondary">aws</span>');
+                                    arn.replace(/\$\{(Region)\}/g, '<span class="badge badge-pill badge-secondary">us-east-1</span>');
+                                    arn.replace(/\$\{(Account)\}/g, '<span class="badge badge-pill badge-secondary">123456789012</span>');
+                                    arn.replace(/\$\{(.+?)\}/g, '<span class="badge badge-pill badge-info">$1</span>');
+
+                                    templates.push(arn);
                                 }
                             }
                         }
@@ -140,12 +147,13 @@ async function preprocess() {
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0];
+            let template = await getTemplates(first_action['action'], iam_def);
 
             method_table_content += '<tr>\
                 <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
                 <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + '</a></td>\
-                <td class="tx-normal">' + '-' + '</td>\
+                <td class="tx-normal">' + template + '</td>\
             </tr>';
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
