@@ -185,7 +185,6 @@ function processManagedPolicy(policy_data, iam_def) {
             <td class="tx-medium"><span class="badge badge-warning">Unknown</span></td>\
             <td class="tx-medium">' + unknown_action['action'] + '</td>\
             <td class="tx-normal"><span class="badge badge-warning">Unknown</span></td>\
-            <td class="tx-normal">' + (unknown_action['condition'] != null) + '</td>\
         </tr>';
     }
     for (let effective_action of policy_data['effective_actions']) {
@@ -199,7 +198,6 @@ function processManagedPolicy(policy_data, iam_def) {
             <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + '</td>\
             <td class="tx-medium">' + effective_action['action'] + '</td>\
             <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
-            <td class="tx-normal">' + (effective_action['condition'] != null) + '</td>\
         </tr>';
     }
 
