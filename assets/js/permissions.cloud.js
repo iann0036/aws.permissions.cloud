@@ -205,14 +205,14 @@ function processManagedPolicy(policy_data, iam_def) {
 }
 
 async function processReferencePage() {
-    let iam_def_data = await fetch('https://iann0036.github.io/sdk-iam-map/js/iam_definition.json');
+    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/js/iam_definition.json');
     let iam_def = await iam_def_data.json();
     let service = iam_def[0];
 
-    let sdk_map_data = await fetch('https://iann0036.github.io/sdk-iam-map/map.json');
+    let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/map.json');
     let sdk_map = await sdk_map_data.json();
 
-    let docs_data = await fetch('https://iann0036.github.io/sdk-iam-map/docs.json');
+    let docs_data = await fetch('https://iann0036.github.io/iam-dataset/docs.json');
     let docs = await docs_data.json();
 
     $('#actions-table tbody').html('');
@@ -377,7 +377,7 @@ async function processReferencePage() {
     // managed policies
 
     let managedpolicies_table_content = '';
-    let managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/managed_policies.json');
+    let managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/managed_policies.json');
     let managedpolicies = await managedpolicies_data.json();
 
     managedpolicies['policies'].sort(function(a, b) {
@@ -410,7 +410,7 @@ async function processReferencePage() {
         </tr>';
 
         if (window.location.pathname.startsWith("/managedpolicies/") && managedpolicy['name'] == window.location.pathname.replace("/managedpolicies/", "")) {
-            let policy = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/managedpolicies/' + managedpolicy['name'] + '.json');
+            let policy = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/managedpolicies/' + managedpolicy['name'] + '.json');
             let policy_data = await policy.json();
             $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
             $('.managedpolicyname').html(managedpolicy['name']);
