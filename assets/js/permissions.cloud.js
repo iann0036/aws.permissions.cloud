@@ -23,6 +23,20 @@ function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
     return arn;
 }
 
+function shortDocs(method, docs) {
+    if (!docs[method]) {
+        return "-";
+    }
+
+    let ret = docs[method].replace("</p>", " . ").replace(/(<([^>]+)>)/gi, "").split(". ")[0];
+
+    if (ret.substr(ret.length-1) != ".") {
+        ret += ".";
+    }
+
+    return ret;
+}
+
 function templateReplace(arn, action, resource_mapping_sub) {
     if (arn.includes("%%iftruthy%")) {
         let arn_parts = arn.split("%");
@@ -62,24 +76,25 @@ function templateReplace(arn, action, resource_mapping_sub) {
 async function getTemplates(action, iam_def) {
     let action_parts = action['action'].split(":");
     let ret = '*';
-    let templates = [];
+    let original_templates = [];
+    let processed_templates = [];
 
-    if (action['arn_override']) {
-        templates.push(templateReplace(action['arn_override']['template'], action, true) + ' <span class="badge badge-dark">overriden</span>');
-    } else {
-        for (let service_def of iam_def) {
-            if (service_def['prefix'] == action_parts[0]) {
-                for (let privilege of service_def['privileges']) {
-                    if (privilege['privilege'] == action_parts[1]) {
-                        for (let resource_type of privilege['resource_types']) {
-                            if (resource_type['resource_type'] != "") {
-                                resource_type_name = resource_type['resource_type'].replace("*", "");
-                                for (let resource of service_def['resources']) {
-                                    if (resource['resource'] == resource_type_name) {
-                                        let arn = arnReplace(resource['arn'], action, true, resource_type_name);
+    for (let service_def of iam_def) {
+        if (service_def['prefix'] == action_parts[0]) {
+            for (let privilege of service_def['privileges']) {
+                if (privilege['privilege'] == action_parts[1]) {
+                    for (let resource_type of privilege['resource_types']) {
+                        if (resource_type['resource_type'] != "") {
+                            resource_type_name = resource_type['resource_type'].replace("*", "");
+                            for (let resource of service_def['resources']) {
+                                if (resource['resource'] == resource_type_name) {
+                                    let arn = arnReplace(resource['arn'], action, true, resource_type_name);
 
-                                        templates.push(arn);
+                                    if (action['arn_override']) {
+                                        arn = templateReplace(action['arn_override']['template'], action, true) + ' <span class="badge badge-dark">overridden</span>';
                                     }
+                                    original_templates.push(resource['arn']);
+                                    processed_templates.push(arn);
                                 }
                             }
                         }
@@ -89,9 +104,16 @@ async function getTemplates(action, iam_def) {
         }
     }
 
-    if (templates.length) {
-        templates = [...new Set(templates)]; // dedupe
-        ret = templates.join("<br />");
+    if (action['arn_override'] && original_templates.length == 0) {
+        original_templates.push("*");
+        processed_templates.push(templateReplace(action['arn_override']['template'], action, true) + " <span class=\"badge badge-dark\">overridden</span>");
+    }
+
+    if (original_templates.length) {
+        original_templates = [...new Set(original_templates)]; // dedupe
+        processed_templates = [...new Set(processed_templates)]; // dedupe
+
+        ret = "<span class=\"original-arn-template\" style=\"display: none;\">" + original_templates.join("<br />") + "</span><span class=\"processed-arn-template\">" + processed_templates.join("<br />") + "</span>";
     }
 
     return ret;
@@ -117,6 +139,73 @@ async function getUsedBy(privilege, sdk_map) {
     return '-';
 }
 
+var arn_template_state = "Processed";
+function swapARN() {
+    $('#arn-template-state').html(arn_template_state);
+    if (arn_template_state == "Processed") {
+        $('.original-arn-template').attr('style', '');
+        $('.processed-arn-template').attr('style', 'display: none;');
+        arn_template_state = "Original";
+    } else {
+        $('.original-arn-template').attr('style', 'display: none;');
+        $('.processed-arn-template').attr('style', '');
+        arn_template_state = "Processed";
+    }
+}
+
+function readable_date(str) {
+    if (!str) {
+        return "-";
+    }
+
+    const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ]
+    let date = new Date(str);
+    
+    return '<span data-toggle="tooltip" data-placement="top" title="' + str + '">' + date.getDate() + ' ' + months[date.getMonth()] + ', ' + date.getFullYear() + '</span>';
+}
+
+function processManagedPolicy(policy_data, iam_def) {
+    effective_policy_table_content = '';
+
+    for (let unknown_action of policy_data['unknown_actions']) {
+        effective_policy_table_content += '<tr>\
+            <td class="tx-medium"><span class="badge badge-warning">Unknown</span></td>\
+            <td class="tx-medium">' + unknown_action['action'] + '</td>\
+            <td class="tx-normal"><span class="badge badge-warning">Unknown</span></td>\
+            <td class="tx-normal">' + (unknown_action['condition'] != null) + '</td>\
+        </tr>';
+    }
+    for (let effective_action of policy_data['effective_actions']) {
+        let access_class = "tx-success";
+        if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
+            access_class = "tx-pink";
+        }
+        let effective_action_parts = effective_action['effective_action'].split(":");
+
+        effective_policy_table_content += '<tr>\
+            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + '</td>\
+            <td class="tx-medium">' + effective_action['action'] + '</td>\
+            <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
+            <td class="tx-normal">' + (effective_action['condition'] != null) + '</td>\
+        </tr>';
+    }
+
+    $('#effectivepolicy-table tbody').append(effective_policy_table_content);
+}
+
 async function processReferencePage() {
     let iam_def_data = await fetch('https://iann0036.github.io/sdk-iam-map/js/iam_definition.json');
     let iam_def = await iam_def_data.json();
@@ -124,6 +213,9 @@ async function processReferencePage() {
 
     let sdk_map_data = await fetch('https://iann0036.github.io/sdk-iam-map/map.json');
     let sdk_map = await sdk_map_data.json();
+
+    let docs_data = await fetch('https://iann0036.github.io/sdk-iam-map/docs.json');
+    let docs = await docs_data.json();
 
     $('#actions-table tbody').html('');
     
@@ -147,17 +239,21 @@ async function processReferencePage() {
 
     $('#body-dashboard').attr('style', 'display: none;');
     $('#body-usage').attr('style', 'display: none;');
-    $('#body-tooling').attr('style', 'display: none;');
+    $('#body-managedpolicies').attr('style', 'display: none;');
     $('#body-permissions').attr('style', 'display: none;');
+    $('#body-managedpolicy').attr('style', 'display: none;');
     if (window.location.pathname == "/") {
         $('#nav-general-dashboard').addClass('active');
         $('#body-dashboard').attr('style', '');
     } else if (window.location.pathname.startsWith("/usage")) {
         $('#nav-general-usage').addClass('active');
         $('#body-usage').attr('style', '');
-    } else if (window.location.pathname.startsWith("/tooling")) {
-        $('#nav-general-tooling').addClass('active');
-        $('#body-tooling').attr('style', '');
+    } else if (window.location.pathname.startsWith("/managedpolicies/")) {
+        $('#nav-general-managedpolicy').addClass('active');
+        $('#body-managedpolicy').attr('style', '');
+    } else if (window.location.pathname.startsWith("/managedpolicies")) {
+        $('#nav-general-managedpolicies').addClass('active');
+        $('#body-managedpolicies').attr('style', '');
     } else if (window.location.pathname.startsWith("/iam") || window.location.pathname.startsWith("/api")) {
         $('#body-permissions').attr('style', '');
     } else {
@@ -173,7 +269,7 @@ async function processReferencePage() {
     }
 
     $('.servicename').html(service['service_name']);
-    $('#iam-count').html(service['privileges'].length);
+    $('.iam-count').html(service['privileges'].length);
 
     $('.iam-link').click(() => {
         window.location.pathname = window.location.pathname.replace("/api/", "/iam/");
@@ -198,6 +294,10 @@ async function processReferencePage() {
         }
 
         let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+
+        if (privilege['description'].substr(privilege['description'].length-1) != ".") {
+            privilege['description'] += ".";
+        }
         
         actions_table_content += '<tr>\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
@@ -250,7 +350,7 @@ async function processReferencePage() {
 
             method_table_content += '<tr>\
                 <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
-                <td rowspan="' + rowspan + '" class="tx-normal">' + '-' + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-normal">' + shortDocs(iam_mapping_name, docs) + '</td>\
                 <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
                 <td class="tx-medium">' + template + '</td>\
             </tr>';
@@ -273,8 +373,59 @@ async function processReferencePage() {
         }
     }
 
-    $('#api-count').html(api_count.toString());
+    $('.api-count').html(api_count.toString());
     $('#methods-table tbody').append(method_table_content);
+
+    // managed policies
+
+    let managedpolicies_table_content = '';
+    let managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/managed_policies.json');
+    let managedpolicies = await managedpolicies_data.json();
+
+    managedpolicies['policies'].sort(function(a, b) {
+        if (a['name'] < b['name']) {
+            return -1;
+        }
+        return 1;
+    });
+
+    let deprecated_policy_count = 0;
+    for (let managedpolicy of managedpolicies['policies']) {
+        if (managedpolicy['deprecated']) {
+            deprecated_policy_count += 1;
+        }
+
+        for (let i=0; i<managedpolicy['access_levels'].length; i++) {
+            let access_class = "tx-success";
+            if (["Write", "Permissions management"].includes(managedpolicy['access_levels'][i])) {
+                access_class = "tx-pink";
+            }
+            managedpolicy['access_levels'][i] = "<span class=\"" + access_class + "\">" + managedpolicy['access_levels'][i] + "</span>";
+        }
+
+        managedpolicies_table_content += '<tr>\
+            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : '') + '</td>\
+            <td class="tx-normal">' + managedpolicy['access_levels'].join(", ") + '</td>\
+            <td class="tx-normal">' + managedpolicy['version'] + '</td>\
+            <td class="tx-normal" style="text-decoration-line: underline; text-decoration-style: dotted;">' + readable_date(managedpolicy['createdate']) + '</td>\
+            <td class="tx-normal" style="text-decoration-line: underline; text-decoration-style: dotted;">' + readable_date(managedpolicy['updatedate']) + '</td>\
+        </tr>';
+
+        if (window.location.pathname.startsWith("/managedpolicies/") && managedpolicy['name'] == window.location.pathname.replace("/managedpolicies/", "")) {
+            let policy = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/managedpolicies/' + managedpolicy['name'] + '.json');
+            let policy_data = await policy.json();
+            $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
+            $('.managedpolicyname').html(managedpolicy['name']);
+            processManagedPolicy(policy_data, iam_def);
+        }
+    }
+
+    $('#managedpolicies-table tbody').append(managedpolicies_table_content);
+
+    $('.active-managedpolicies-count').html(managedpolicies['policies'].length - deprecated_policy_count);
+    $('.deprecated-managedpolicies-count').html(deprecated_policy_count);
+
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 processReferencePage();

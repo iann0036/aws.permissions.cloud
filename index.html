@@ -35,12 +35,14 @@
     <title>Permissions Reference for AWS IAM | permissions.cloud</title>
 
     <link rel="preload" href="https://iann0036.github.io/sdk-iam-map/map.json" as="fetch" crossorigin>
+    <link rel="preload" href="https://iann0036.github.io/sdk-iam-map/docs.json" as="fetch" crossorigin>
     <link rel="preload" href="https://iann0036.github.io/sdk-iam-map/js/iam_definition.json" as="fetch" crossorigin>
 
     <!-- vendor css -->
     <link href="/lib/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
     <link href="/lib/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link href="/lib/prismjs/themes/prism-vs.css" rel="stylesheet">
 
     <!-- DashForge CSS -->
     <link rel="stylesheet" href="/assets/css/dashforge.css">
@@ -64,7 +66,7 @@
           <li class="nav-label">General</li>
           <li class="nav-item" id="nav-general-dashboard"><a href="/" class="nav-link"><span>Dashboard</span></a></li>
           <li class="nav-item" id="nav-general-usage"><a href="/usage" class="nav-link"><span>Reference Usage</span></a></li>
-          <li class="nav-item" id="nav-general-tooling"><a href="/tooling" class="nav-link"><span>Security Tooling</span></a></li>
+          <li class="nav-item" id="nav-general-managedpolicies"><a href="/managedpolicies" class="nav-link"><span>Managed Policies</span></a></li>
           <li class="nav-label mg-t-25">Reference</li>
           <div id="reference-list"></div>
         </ul>
@@ -95,7 +97,7 @@
               <h4 class="mg-b-0 tx-spacing--1">Permissions Reference for <span class='servicename'></span></h4>
             </div>
             <div class="d-none d-md-block">
-              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download CSV</button>
+              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
               <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-iam api-link" style="display: none;"><i data-feather="code" class="wd-10 mg-r-5"></i> Switch to API</button>
               <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-api iam-link" style="display: none;"><i data-feather="lock" class="wd-10 mg-r-5"></i> Switch to IAM</button>
             </div>
@@ -124,7 +126,7 @@
                       </div>
                       <div class="media-body">
                         <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold tx-nowrap mg-b-5 mg-md-b-8">IAM Actions</h6>
-                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0" id="iam-count"></h4>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 iam-count">-</h4>
                       </div>
                     </div>
                     <div class="media mg-t-20 mg-sm-t-0 mg-sm-l-15 mg-md-l-40">
@@ -133,7 +135,7 @@
                       </div>
                       <div class="media-body">
                         <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold mg-b-5 mg-md-b-8">API Methods</h6>
-                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0">-</h4>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 api-count">-</h4>
                       </div>
                     </div>
                   </div>
@@ -178,7 +180,7 @@
                       </div>
                       <div class="media-body">
                         <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold tx-nowrap mg-b-5 mg-md-b-8">IAM Actions</h6>
-                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0" id="iam-count">-</h4>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 iam-count">-</h4>
                       </div>
                     </div>
                     <div class="media mg-t-20 mg-sm-t-0 mg-sm-l-15 mg-md-l-40">
@@ -187,7 +189,7 @@
                       </div>
                       <div class="media-body">
                         <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold mg-b-5 mg-md-b-8">API Methods</h6>
-                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0" id="iam-count">-</h4>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 api-count">-</h4>
                       </div>
                     </div>
                   </div>
@@ -199,7 +201,7 @@
                         <th>Method</th>
                         <th>Description</th>
                         <th>IAM Action</th>
-                        <th>ARN Template</th>
+                        <th>ARN Template&nbsp;&nbsp;<a onclick="swapARN()" style="text-transform: none;" href="#" class="badge badge-secondary"><i class="fas fa-exchange-alt"></i> Show <span id="arn-template-state">Original</span></a></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -212,8 +214,8 @@
                 <div class="media">
                   <span class="tx-color-04"><i data-feather="download" class="wd-60 ht-60"></i></span>
                   <div class="media-body mg-l-20">
-                    <h6 class="mg-b-10">Download the permissions in CSV format.</h6>
-                    <p class="tx-color-03 mg-b-0">Open it in a spreadsheet or consume it with your own <a href="/tooling">tooling</a>.</p>
+                    <h6 class="mg-b-10">Download the permissions in JSON format.</h6>
+                    <p class="tx-color-03 mg-b-0">Consume the above permissions with your own tooling.</p>
                   </div>
                 </div><!-- media -->
               </div>
@@ -378,57 +380,128 @@
         </div><!-- container -->
       </div>
 
-      <div class="content-body" id="body-tooling" style="display: none;">
+      <div class="content-body" id="body-managedpolicies" style="display: none;">
         <div class="container pd-x-0">
           <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
             <div>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-style1 mg-b-10">
                   <li class="breadcrumb-item"><a href="/">General</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Security Tooling</li>
+                  <li class="breadcrumb-item active" aria-current="page">Managed Policies</li>
                 </ol>
               </nav>
-              <h4 class="mg-b-0 tx-spacing--1">Security Tooling</h4>
+              <h4 class="mg-b-0 tx-spacing--1">Managed Policies</h4>
+            </div>
+            <div class="d-none d-md-block">
+              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
             </div>
           </div>
 
           <div class="row row-xs">
             <div class="col-lg-12 col-xl-12 mg-t-12">
-              <div class="card card-body">
-                <p class="df-lead">blahblah.</p>
-
-                <hr class="mg-y-40">
-
-                <h4 class="mg-b-10">blahblah</h4>
-                <p class="mg-b-30">blahblah.</p>
-
-                <hr class="mg-y-40">
-
-                <h4 class="mg-b-10">blahblah</h4>
-                <p class="mg-b-30">blahblah.</p>
-
-                <div class="table-responsive mg-t-25">
-                  <table class="table table-components">
+              <div class="card mg-b-10">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">AWS Managed Policies</span></h6>
+                    <p class="tx-13 tx-color-03 mg-b-0">Below is a list of AWS Managed Policies.</p>
+                  </div>
+                </div><!-- card-header -->
+                <div class="card-body pd-y-30">
+                  <div class="d-sm-flex">
+                    <div class="media">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-indigo tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-6">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold tx-nowrap mg-b-5 mg-md-b-8">Active Managed Policies</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 active-managedpolicies-count">-</h4>
+                      </div>
+                    </div>
+                    <div class="media mg-t-20 mg-sm-t-0 mg-sm-l-15 mg-md-l-40">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-danger tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-4">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold mg-b-5 mg-md-b-8">Deprecated Managed Policies</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 deprecated-managedpolicies-count">-</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- card-body -->
+                <div class="table-responsive">
+                  <table class="table table-dashboard mg-b-0" id="managedpolicies-table">
                     <thead>
                       <tr>
-                        <th class="wd-40p">blahblah</th>
-                        <th class="wd-60p">blahblah</th>
+                        <th>Name</th>
+                        <th>Access Levels</th>
+                        <th>Current Version</th>
+                        <th>Creation Date</th>
+                        <th>Last Updated</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>blahblah</td>
-                        <td>blahblah</td>
-                      </tr>
                     </tbody>
                   </table>
                 </div><!-- table-responsive -->
+              </div><!-- card -->
+            </div><!-- col -->
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
 
-                <hr class="mg-y-40">
+      <div class="content-body" id="body-managedpolicy" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">General</a></li>
+                  <li class="breadcrumb-item"><a href="/managedpolicies">Managed Policies</a></li>
+                  <li class="breadcrumb-item active managedpolicyname" aria-current="page"></li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1 managedpolicyname"></h4>
+            </div>
+            <div class="d-none d-md-block">
+              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
+            </div>
+          </div>
 
-                <h4 class="mg-b-10">blahblah</h4>
-                <p class="mg-b-30">blahblah.</p>
-              </div>
+          <div class="row row-xs">
+            <div class="col-lg-6 col-xl-6 mg-t-6">
+              <div class="card mg-b-10">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">Raw Policy</h6>
+                    <p class="tx-13 tx-color-03 mg-b-10">Below is the raw managed policy.</p>
+                  </div>
+                </div><!-- card-header -->
+                <code class="language-css managedpolicyraw"></code>
+              </div><!-- card -->
+            </div><!-- col -->
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card mg-b-10">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">Effective Actions</h6>
+                    <p class="tx-13 tx-color-03 mg-b-10">Below is a breakdown of the effective actions for the managed policy.</p>
+                  </div>
+                </div><!-- card-header -->
+                <div class="table-responsive">
+                  <table class="table table-dashboard mg-b-0" id="effectivepolicy-table">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
+                        <th>Based On</th>
+                        <th>Access Level</th>
+                        <th>Conditional</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+              </div><!-- card -->
             </div><!-- col -->
           </div><!-- row -->
         </div><!-- container -->
@@ -460,6 +533,7 @@
     <script src="/lib/jquery.flot/jquery.flot.stack.js"></script>
     <script src="/lib/jquery.flot/jquery.flot.resize.js"></script>
     <script src="/lib/chart.js/Chart.bundle.js"></script>
+    <script src="/lib/prismjs/prism.js" data-manual></script>
 
     <script src="/assets/js/dashforge.js"></script>
     <script src="/assets/js/dashforge.aside.js"></script>
