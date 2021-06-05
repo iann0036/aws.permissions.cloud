@@ -97,7 +97,7 @@
               <h4 class="mg-b-0 tx-spacing--1">Permissions Reference for <span class='servicename'></span></h4>
             </div>
             <div class="d-none d-md-block">
-              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
+              <a id="permissions-json-link" href="https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json" target="_blank"><button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button></a>
               <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-iam api-link" style="display: none;"><i data-feather="code" class="wd-10 mg-r-5"></i> Switch to API</button>
               <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-api iam-link" style="display: none;"><i data-feather="lock" class="wd-10 mg-r-5"></i> Switch to IAM</button>
             </div>
@@ -246,14 +246,10 @@
                   <ul class="list-inline d-flex mg-t-20 mg-sm-t-10 mg-md-t-0 mg-b-0">
                     <li class="list-inline-item d-flex align-items-center">
                       <span class="d-block wd-10 ht-10 bg-df-1 rounded mg-r-5"></span>
-                      <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">CloudFormation Types</span>
-                    </li>
-                    <li class="list-inline-item d-flex align-items-center mg-l-5">
-                      <span class="d-block wd-10 ht-10 bg-df-2 rounded mg-r-5"></span>
                       <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">API Methods</span>
                     </li>
                     <li class="list-inline-item d-flex align-items-center mg-l-5">
-                      <span class="d-block wd-10 ht-10 bg-df-3 rounded mg-r-5"></span>
+                      <span class="d-block wd-10 ht-10 bg-df-2 rounded mg-r-5"></span>
                       <span class="tx-sans tx-uppercase tx-10 tx-medium tx-color-03">IAM Permissions</span>
                     </li>
                   </ul>
@@ -262,11 +258,11 @@
                   <div class="pos-absolute t-20 l-20 wd-xl-100p z-index-10">
                     <div class="row">
                       <div class="col-sm-5">
-                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5">9,135</h3>
+                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5" id="dashboard-api-total"></h3>
                         <h6 class="tx-uppercase tx-11 tx-spacing-1 tx-color-02 tx-semibold mg-b-10">API Methods</h6>
                       </div><!-- col -->
                       <div class="col-sm-5 mg-t-20 mg-sm-t-0">
-                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5">9,638</h3>
+                        <h3 class="tx-normal tx-rubik tx-spacing--2 mg-b-5" id="dashboard-iam-total"></h3>
                         <h6 class="tx-uppercase tx-11 tx-spacing-1 tx-color-02 tx-semibold mg-b-10">IAM Permissions</h6>
                       </div><!-- col -->
                     </div><!-- row -->
@@ -291,29 +287,36 @@
                     <div class="col-6">
                       <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 tx-nowrap mg-b-5">List</p>
                       <div class="d-flex align-items-center">
-                        <div class="wd-10 ht-10 rounded-circle bg-pink mg-r-5"></div>
-                        <h6 class="tx-normal tx-rubik mg-b-0">1,320 <small class="tx-color-04">25%</small></h6>
+                        <div class="wd-10 ht-10 rounded-circle bg-teal mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0"><span id="dashboard-list-count"></span> <small id="dashboard-list-percent" class="tx-color-04"></small></h6>
                       </div>
                     </div><!-- col -->
                     <div class="col-6">
                       <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Read</p>
                       <div class="d-flex align-items-center">
                         <div class="wd-10 ht-10 rounded-circle bg-primary mg-r-5"></div>
-                        <h6 class="tx-normal tx-rubik mg-b-0">987 <small class="tx-color-04">20%</small></h6>
+                        <h6 class="tx-normal tx-rubik mg-b-0"><span id="dashboard-read-count"></span> <small id="dashboard-read-percent" class="tx-color-04"></small></h6>
+                      </div>
+                    </div><!-- col -->
+                    <div class="col-6 mg-t-20">
+                      <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Tagging</p>
+                      <div class="d-flex align-items-center">
+                        <div class="wd-10 ht-10 rounded-circle bg-warning mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0"><span id="dashboard-tagging-count"></span> <small id="dashboard-tagging-percent" class="tx-color-04"></small></h6>
                       </div>
                     </div><!-- col -->
                     <div class="col-6 mg-t-20">
                       <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Write</p>
                       <div class="d-flex align-items-center">
-                        <div class="wd-10 ht-10 rounded-circle bg-teal mg-r-5"></div>
-                        <h6 class="tx-normal tx-rubik mg-b-0">2,010 <small class="tx-color-04">30%</small></h6>
+                        <div class="wd-10 ht-10 rounded-circle bg-orange mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0"><span id="dashboard-write-count"></span> <small id="dashboard-write-percent" class="tx-color-04"></small></h6>
                       </div>
                     </div><!-- col -->
                     <div class="col-6 mg-t-20">
                       <p class="tx-10 tx-uppercase tx-medium tx-color-03 tx-spacing-1 mg-b-5">Permissions management</p>
                       <div class="d-flex align-items-center">
-                        <div class="wd-10 ht-10 rounded-circle bg-orange mg-r-5"></div>
-                        <h6 class="tx-normal tx-rubik mg-b-0">1,054 <small class="tx-color-04">25%</small></h6>
+                        <div class="wd-10 ht-10 rounded-circle bg-pink mg-r-5"></div>
+                        <h6 class="tx-normal tx-rubik mg-b-0"><span id="dashboard-permissionsmanagement-count"></span> <small id="dashboard-permissionsmanagement-percent" class="tx-color-04"></small></h6>
                       </div>
                     </div><!-- col -->
                   </div><!-- row -->
@@ -393,7 +396,7 @@
               <h4 class="mg-b-0 tx-spacing--1">Managed Policies</h4>
             </div>
             <div class="d-none d-md-block">
-              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
+              <a href="https://raw.githubusercontent.com/iann0036/iam-dataset/main/managed_policies.json" target="_blank"><button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button></a>
             </div>
           </div>
 
@@ -468,7 +471,7 @@
           </div>
 
           <div class="row row-xs">
-            <div class="col-lg-6 col-xl-6 mg-t-6">
+            <div class="col-lg-12 col-xl-12 mg-t-12">
               <div class="card mg-b-10">
                 <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
                   <div>
@@ -476,7 +479,7 @@
                     <p class="tx-13 tx-color-03 mg-b-10">Below is the raw managed policy.</p>
                   </div>
                 </div><!-- card-header -->
-                <code class="language-css managedpolicyraw"></code>
+                <code class="language-css managedpolicyraw mg-t-10 mg-r-10 mg-l-10 mg-b-10" style="overflow: auto;"></code>
               </div><!-- card -->
             </div><!-- col -->
             <div class="col-lg-12 col-xl-12 mg-t-12">

@@ -204,6 +204,106 @@ function processManagedPolicy(policy_data, iam_def) {
     $('#effectivepolicy-table tbody').append(effective_policy_table_content);
 }
 
+function addcomma(val) {
+    if (val >= 1000) {
+        return Math.floor(val/1000).toString() + "," + (val%1000).toString();
+    }
+
+    return val;
+}
+
+function addDashboardData(iam_def, sdk_map) {
+    var flot1 = $.plot('#flotChart', [{
+        data: df3,
+        color: '#69b2f8'
+    }, {
+        data: df1,
+        color: '#d1e6fa'
+    }], {
+        series: {
+            stack: 0,
+            shadowSize: 0,
+            lines: {
+                show: true,
+                lineWidth: 0,
+                fill: 1
+            }
+        },
+        grid: {
+            borderWidth: 0,
+            aboveData: true
+        },
+        yaxis: {
+            show: false,
+            min: 0,
+            max: 200
+        },
+        xaxis: {
+            show: true,
+            ticks: [[0, ''], [8, 'Jan'], [20, 'Feb'], [32, 'Mar'], [44, 'Apr'], [56, 'May'], [68, 'Jun'], [80, 'Jul'], [92, 'Aug'], [104, 'Sep'], [116, 'Oct'], [128, 'Nov'], [140, 'Dec']],
+            color: 'rgba(255,255,255,.2)'
+        }
+    });
+
+    let access_level_counts = {
+        'List': 0,
+        'Read': 0,
+        'Tagging': 0,
+        'Write': 0,
+        'Permissions management': 0
+    }
+    let access_level_total = 0;
+
+    for (let service of iam_def) {
+        for (let priv of service['privileges']) {
+            access_level_counts[priv['access_level']] += 1;
+            access_level_total += 1;
+        }
+    }
+
+    var datapie = {
+        labels: ['List', 'Read', 'Tagging', 'Write', 'Permissions management'],
+        datasets: [{
+            data: Object.values(access_level_counts),
+            backgroundColor: ['#7ee5e5', '#7ebcff', '#ffe082', '#fdbd88', '#f77eb9']
+        }]
+    };
+
+    $('#dashboard-list-count').html(addcomma(access_level_counts['List']));
+    $('#dashboard-list-percent').html(Math.round(access_level_counts['List'] / access_level_total * 100).toString() + "%");
+    $('#dashboard-read-count').html(addcomma(access_level_counts['Read']));
+    $('#dashboard-read-percent').html(Math.round(access_level_counts['Read'] / access_level_total * 100).toString() + "%");
+    $('#dashboard-tagging-count').html(addcomma(access_level_counts['Tagging']));
+    $('#dashboard-tagging-percent').html(Math.round(access_level_counts['Tagging'] / access_level_total * 100).toString() + "%");
+    $('#dashboard-write-count').html(addcomma(access_level_counts['Write']));
+    $('#dashboard-write-percent').html(Math.round(access_level_counts['Write'] / access_level_total * 100).toString() + "%");
+    $('#dashboard-permissionsmanagement-count').html(addcomma(access_level_counts['Permissions management']));
+    $('#dashboard-permissionsmanagement-percent').html(Math.round(access_level_counts['Permissions management'] / access_level_total * 100).toString() + "%");
+
+    $('#dashboard-iam-total').html(addcomma(access_level_total));
+    $('#dashboard-api-total').html(addcomma(Object.keys(sdk_map['sdk_method_iam_mappings']).length));
+
+    var optionpie = {
+        maintainAspectRatio: false,
+        responsive: true,
+        legend: {
+            display: false,
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    };
+
+    // For a pie chart
+    var ctx2 = document.getElementById('chartDonut');
+    var myDonutChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: datapie,
+        options: optionpie
+    });
+}
+
 async function processReferencePage() {
     let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/js/iam_definition.json');
     let iam_def = await iam_def_data.json();
@@ -424,6 +524,9 @@ async function processReferencePage() {
     $('.deprecated-managedpolicies-count').html(deprecated_policy_count);
 
     $('[data-toggle="tooltip"]').tooltip();
+
+    // dashboard
+    addDashboardData(iam_def, sdk_map);
 }
 
 processReferencePage();
