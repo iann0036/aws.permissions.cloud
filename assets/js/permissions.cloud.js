@@ -225,6 +225,9 @@ async function addDashboardData(iam_def, sdk_map) {
     let last_ds2 = counts['iam'][0]['count'];
     let i = 0;
 
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let ticks = [[0, '']];
+
     while (compare_date < now) {
         for (let api_item of counts['api']) {
             let ds1date = Math.round(new Date(api_item['date']) / 1000);
@@ -246,7 +249,14 @@ async function addDashboardData(iam_def, sdk_map) {
 
         compare_date += 86400;
         i += 1;
+
+        let compare_date_date = new Date(compare_date * 1000);
+        if (compare_date_date.getDate()	== 1) {
+            ticks.push([i, monthNames[compare_date_date.getMonth()]])
+        }
     }
+
+    console.log(ticks);
 
     var flot1 = $.plot('#flotChart', [{
         data: ds1,
@@ -270,12 +280,12 @@ async function addDashboardData(iam_def, sdk_map) {
         },
         yaxis: {
             show: false,
-            min: Math.min(ds1[0][1]*0.9, ds2[0][1]*0.9),
+            min: 6000,
             max: Math.max(ds1[ds1.length-1][1]*1.3, ds2[ds2.length-1][1]*1.3)
         },
         xaxis: {
             show: true,
-            ticks: [[0, ''], [30, 'Jan'], [60, 'Feb'], [90, 'Mar'], [120, 'Apr'], [150, 'May'], [180, 'Jun'], [210, 'Jul'], [240, 'Aug'], [270, 'Sep'], [300, 'Oct'], [330, 'Nov'], [360, 'Dec']],
+            ticks: ticks,
             color: 'rgba(255,255,255,.2)'
         }
     });
