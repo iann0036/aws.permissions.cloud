@@ -212,12 +212,47 @@ function addcomma(val) {
     return val;
 }
 
-function addDashboardData(iam_def, sdk_map) {
+async function addDashboardData(iam_def, sdk_map) {
+    let counts_data = await fetch('https://iann0036.github.io/iam-dataset/historic-counts.json');
+    let counts = await counts_data.json();
+
+    let now = Math.round(new Date() / 1000);
+    let compare_date = now - (370*24*60*60);
+
+    let ds1 = [];
+    let last_ds1 = counts['api'][0]['count'];
+    let ds2 = [];
+    let last_ds2 = counts['iam'][0]['count'];
+    let i = 0;
+
+    while (compare_date < now) {
+        for (let api_item of counts['api']) {
+            let ds1date = Math.round(new Date(api_item['date']) / 1000);
+            if (ds1date > compare_date && ds1date < compare_date + 86400) {
+                last_ds1 = api_item['count'];
+            }
+        }
+
+        
+        for (let iam_item of counts['iam']) {
+            let ds2date = Math.round(new Date(iam_item['date']) / 1000);
+            if (ds2date > compare_date && ds2date < compare_date + 86400) {
+                last_ds2 = iam_item['count'];
+            }
+        }
+
+        ds1.push([i, last_ds1]);
+        ds2.push([i, last_ds2-last_ds1]);
+
+        compare_date += 86400;
+        i += 1;
+    }
+
     var flot1 = $.plot('#flotChart', [{
-        data: df3,
+        data: ds1,
         color: '#69b2f8'
     }, {
-        data: df1,
+        data: ds2,
         color: '#d1e6fa'
     }], {
         series: {
@@ -235,12 +270,12 @@ function addDashboardData(iam_def, sdk_map) {
         },
         yaxis: {
             show: false,
-            min: 0,
-            max: 200
+            min: Math.min(ds1[0][1]*0.9, ds2[0][1]*0.9),
+            max: Math.max(ds1[ds1.length-1][1]*1.3, ds2[ds2.length-1][1]*1.3)
         },
         xaxis: {
             show: true,
-            ticks: [[0, ''], [8, 'Jan'], [20, 'Feb'], [32, 'Mar'], [44, 'Apr'], [56, 'May'], [68, 'Jun'], [80, 'Jul'], [92, 'Aug'], [104, 'Sep'], [116, 'Oct'], [128, 'Nov'], [140, 'Dec']],
+            ticks: [[0, ''], [30, 'Jan'], [60, 'Feb'], [90, 'Mar'], [120, 'Apr'], [150, 'May'], [180, 'Jun'], [210, 'Jul'], [240, 'Aug'], [270, 'Sep'], [300, 'Oct'], [330, 'Nov'], [360, 'Dec']],
             color: 'rgba(255,255,255,.2)'
         }
     });
@@ -281,7 +316,7 @@ function addDashboardData(iam_def, sdk_map) {
     $('#dashboard-permissionsmanagement-percent').html(Math.round(access_level_counts['Permissions management'] / access_level_total * 100).toString() + "%");
 
     $('#dashboard-iam-total').html(addcomma(access_level_total));
-    $('#dashboard-api-total').html(addcomma(Object.keys(sdk_map['sdk_method_iam_mappings']).length));
+    $('#dashboard-api-total').html(addcomma(counts['api'][counts['api'].length-1]['count']));
 
     var optionpie = {
         maintainAspectRatio: false,
