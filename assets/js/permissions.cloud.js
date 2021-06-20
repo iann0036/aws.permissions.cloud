@@ -413,15 +413,15 @@ async function processReferencePage() {
         for (let service of iam_def) {
             for (let privilege of service['privileges']) {
                 let fullpriv = service['prefix'] + ":" + privilege['privilege'];
-                if (fullpriv.toLowerCase().startsWith(searchterm)) {
-                    results.push(fullpriv)
+                if (fullpriv.toLowerCase().includes(searchterm)) {
+                    results.push(fullpriv);
                 }
-                if (results.length > 3) break;
+                if (results.length >= 10) break;
             }
-            if (results.length > 3) break;
+            if (results.length >= 10) break;
         }
-        for (let i=0; i<results.length && i<4; i++) {
-            html += `<li><a href=\"/iam/${results[i].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
+        for (let i=0; i<results.length && i<10; i++) {
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/iam/${results[i].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
         };
         $('#search-iam-list').html(html);
 
@@ -429,13 +429,13 @@ async function processReferencePage() {
         html = '';
         results = [];
         for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
-            if (iam_mapping_name.toLowerCase().startsWith(searchterm)) {
-                results.push(iam_mapping_name)
+            if (iam_mapping_name.toLowerCase().includes(searchterm)) {
+                results.push(iam_mapping_name);
             }
-            if (results.length > 3) break;
+            if (results.length >= 10) break;
         }
-        for (let i=0; i<results.length && i<4; i++) {
-            html += `<li><a href=\"/api/${results[i].split(".")[0]}#${results[i]}\">${results[i]}</a></li>`;
+        for (let i=0; i<results.length && i<10; i++) {
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/api/${sdk_map['sdk_method_iam_mappings'][results[i]][0]['action'].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
         };
         $('#search-api-list').html(html);
 
@@ -443,13 +443,13 @@ async function processReferencePage() {
         html = '';
         results = [];
         for (let managedpolicy of managedpolicies['policies']) {
-            if (managedpolicy['name'].toLowerCase().startsWith(searchterm)) {
-                results.push(managedpolicy['name'])
+            if (managedpolicy['name'].toLowerCase().includes(searchterm)) {
+                results.push(managedpolicy['name']);
             }
-            if (results.length > 3) break;
+            if (results.length >= 10) break;
         }
-        for (let i=0; i<results.length && i<4; i++) {
-            html += `<li><a href=\"/managedpolicies/${results[i]}\">${results[i]}</a></li>`;
+        for (let i=0; i<results.length && i<10; i++) {
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/managedpolicies/${results[i]}\">${results[i]}</a></li>`;
         };
         $('#search-managedpolicies-list').html(html);
     });
