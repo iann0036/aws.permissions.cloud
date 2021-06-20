@@ -393,12 +393,68 @@ async function processReferencePage() {
         }
     }
 
+    // Search
     $('input[type="search"]').on('click', function(e){
         e.preventDefault();
         $('.navbar-search').addClass('visible');
         $('.backdrop').addClass('show');
+        $('input[type="search"]').blur();
+        setTimeout(() => {
+            $('.navbar-search-header > input').focus();
+        }, 100);
     });
 
+    $('.navbar-search-header > input').on('input', function(e){
+        let searchterm = $('.navbar-search-header > input').val().toLowerCase();
+
+        // IAM
+        let html = '';
+        let results = [];
+        for (let service of iam_def) {
+            for (let privilege of service['privileges']) {
+                let fullpriv = service['prefix'] + ":" + privilege['privilege'];
+                if (fullpriv.toLowerCase().startsWith(searchterm)) {
+                    results.push(fullpriv)
+                }
+                if (results.length > 3) break;
+            }
+            if (results.length > 3) break;
+        }
+        for (let i=0; i<results.length && i<4; i++) {
+            html += `<li><a href=\"/iam/${results[i].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
+        };
+        $('#search-iam-list').html(html);
+
+        // API
+        html = '';
+        results = [];
+        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
+            if (iam_mapping_name.toLowerCase().startsWith(searchterm)) {
+                results.push(iam_mapping_name)
+            }
+            if (results.length > 3) break;
+        }
+        for (let i=0; i<results.length && i<4; i++) {
+            html += `<li><a href=\"/api/${results[i].split(".")[0]}#${results[i]}\">${results[i]}</a></li>`;
+        };
+        $('#search-api-list').html(html);
+
+        // Managed Policies
+        html = '';
+        results = [];
+        for (let managedpolicy of managedpolicies['policies']) {
+            if (managedpolicy['name'].toLowerCase().startsWith(searchterm)) {
+                results.push(managedpolicy['name'])
+            }
+            if (results.length > 3) break;
+        }
+        for (let i=0; i<results.length && i<4; i++) {
+            html += `<li><a href=\"/managedpolicies/${results[i]}\">${results[i]}</a></li>`;
+        };
+        $('#search-managedpolicies-list').html(html);
+    });
+
+    //
     $('#body-dashboard').attr('style', 'display: none;');
     $('#body-usage').attr('style', 'display: none;');
     $('#body-managedpolicies').attr('style', 'display: none;');
