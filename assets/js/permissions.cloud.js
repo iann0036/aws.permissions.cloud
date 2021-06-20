@@ -256,8 +256,6 @@ async function addDashboardData(iam_def, sdk_map) {
         }
     }
 
-    console.log(ticks);
-
     var flot1 = $.plot('#flotChart', [{
         data: ds1,
         color: '#69b2f8'
@@ -349,6 +347,21 @@ async function addDashboardData(iam_def, sdk_map) {
     });
 }
 
+function expand_resource_type(service, resource_type) {
+    if (resource_type == "") {
+        return "*";
+    }
+
+    for (let res_type of service['resources']) {
+        if (res_type['resource'] == resource_type.replace("*", "")) {
+            if (resource_type.includes("*")) {
+                return res_type['arn'] + ' <span class="badge badge-primary">required</span>';
+            }
+            return res_type['arn'];
+        }
+    }
+}
+
 async function processReferencePage() {
     let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/js/iam_definition.json');
     let iam_def = await iam_def_data.json();
@@ -379,6 +392,12 @@ async function processReferencePage() {
             }
         }
     }
+
+    $('input[type="search"]').on('click', function(e){
+        e.preventDefault();
+        $('.navbar-search').addClass('visible');
+        $('.backdrop').addClass('show');
+    });
 
     $('#body-dashboard').attr('style', 'display: none;');
     $('#body-usage').attr('style', 'display: none;');
@@ -447,7 +466,7 @@ async function processReferencePage() {
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + used_by + '</td>\
             <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
-            <td class="tx-normal">' + first_resource_type['resource_type'] + '</td>\
+            <td class="tx-normal">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
         </tr>';
 
@@ -458,7 +477,7 @@ async function processReferencePage() {
             }
 
             actions_table_content += '<tr>\
-                <td class="tx-normal" style="padding-left: 10px !important;">' + resource_type['resource_type'] + '</td>\
+                <td class="tx-normal" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>';
         }
@@ -547,7 +566,7 @@ async function processReferencePage() {
         }
 
         managedpolicies_table_content += '<tr>\
-            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : '') + '</td>\
+            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (managedpolicy['privesc'] ? ' <span class="badge badge-warning">Possible PrivEsc</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : '') + '</td>\
             <td class="tx-normal">' + managedpolicy['access_levels'].join(", ") + '</td>\
             <td class="tx-normal">' + managedpolicy['version'] + '</td>\
             <td class="tx-normal" style="text-decoration-line: underline; text-decoration-style: dotted;">' + readable_date(managedpolicy['createdate']) + '</td>\

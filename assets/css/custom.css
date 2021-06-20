@@ -8,3 +8,7 @@
 .nav-aside {
     white-space: normal !important;
 }
+
+.navbar-search {
+    z-index: 1001 !important;
+}
