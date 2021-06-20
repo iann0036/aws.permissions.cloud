@@ -180,6 +180,10 @@ function readable_date(str) {
 function processManagedPolicy(policy_data, iam_def) {
     effective_policy_table_content = '';
 
+    console.log(policy_data);
+
+    $('#managedpolicytags').html((policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">Possible PrivEsc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : ''));
+
     for (let unknown_action of policy_data['unknown_actions']) {
         effective_policy_table_content += '<tr>\
             <td class="tx-medium"><span class="badge badge-warning">Unknown</span></td>\
@@ -349,7 +353,7 @@ async function addDashboardData(iam_def, sdk_map) {
 
 function expand_resource_type(service, resource_type) {
     if (resource_type == "") {
-        return "*";
+        return "";
     }
 
     for (let res_type of service['resources']) {
