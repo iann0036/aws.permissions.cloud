@@ -523,7 +523,7 @@ async function processReferencePage() {
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
             <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
-            <td class="tx-normal">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
+            <td class="tx-medium">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
         </tr>';
 
@@ -534,7 +534,7 @@ async function processReferencePage() {
             }
 
             actions_table_content += '<tr>\
-                <td class="tx-normal" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
+                <td class="tx-medium" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
                 <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>';
         }
@@ -575,7 +575,7 @@ async function processReferencePage() {
             </tr>';
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
-                let actionlink = "/iam/" + action['action'].split(":")[0];
+                let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
                 let template = await getTemplates(action, iam_def);
                 let undocumented = '';
                 if (action['undocumented']) {
