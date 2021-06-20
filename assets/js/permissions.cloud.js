@@ -125,7 +125,7 @@ async function getUsedBy(privilege, sdk_map) {
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
             if (action['action'] == privilege) {
-                used_by_methods.push(iam_mapping_name);
+                used_by_methods.push("<a href=\"/api/" + sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0]['action'].split(":")[0] + "#" + iam_mapping_name.replace(".", "_") + "\">" + iam_mapping_name + "</a>");
             }
         }
     }
@@ -413,7 +413,7 @@ async function processReferencePage() {
         for (let service of iam_def) {
             for (let privilege of service['privileges']) {
                 let fullpriv = service['prefix'] + ":" + privilege['privilege'];
-                if (fullpriv.toLowerCase().includes(searchterm)) {
+                if (service['prefix'].toLowerCase().startsWith(searchterm) || privilege['privilege'].toLowerCase().startsWith(searchterm) || fullpriv.toLowerCase().startsWith(searchterm)) {
                     results.push(fullpriv);
                 }
                 if (results.length >= 10) break;
@@ -421,21 +421,22 @@ async function processReferencePage() {
             if (results.length >= 10) break;
         }
         for (let i=0; i<results.length && i<10; i++) {
-            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/iam/${results[i].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/iam/${results[i].split(":")[0]}#${results[i].replace(":", "-")}\">${results[i]}</a></li>`;
         };
         $('#search-iam-list').html(html);
 
         // API
         html = '';
         results = [];
-        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings'])) {
-            if (iam_mapping_name.toLowerCase().includes(searchterm)) {
+        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+            let split_name = iam_mapping_name.split(".");
+            if (split_name[0].toLowerCase().startsWith(searchterm) || split_name[1].toLowerCase().startsWith(searchterm) || iam_mapping_name.toLowerCase().startsWith(searchterm)) {
                 results.push(iam_mapping_name);
             }
             if (results.length >= 10) break;
         }
         for (let i=0; i<results.length && i<10; i++) {
-            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/api/${sdk_map['sdk_method_iam_mappings'][results[i]][0]['action'].split(":")[0]}#${results[i]}\">${results[i]}</a></li>`;
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/api/${sdk_map['sdk_method_iam_mappings'][results[i]][0]['action'].split(":")[0]}#${results[i].replace(".", "_")}\">${results[i]}</a></li>`;
         };
         $('#search-api-list').html(html);
 
@@ -517,10 +518,10 @@ async function processReferencePage() {
             privilege['description'] += ".";
         }
         
-        actions_table_content += '<tr>\
+        actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
             <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + '</td>\
             <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
-            <td rowspan="' + rowspan + '" class="tx-normal">' + used_by + '</td>\
+            <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
             <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
             <td class="tx-normal">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
@@ -559,14 +560,14 @@ async function processReferencePage() {
 
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
-            let actionlink = "/iam/" + first_action['action'].split(":")[0];
+            let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
             let template = await getTemplates(first_action, iam_def);
             let undocumented = '';
             if (first_action['undocumented']) {
                 undocumented = ' <span class="badge badge-danger">undocumented</span>';
             }
 
-            method_table_content += '<tr>\
+            method_table_content += '<tr id="' + iam_mapping_name_parts[0] + '_' + iam_mapping_name_parts[1] + '">\
                 <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + shortDocs(iam_mapping_name, docs) + '</td>\
                 <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
@@ -644,6 +645,11 @@ async function processReferencePage() {
     $('.deprecated-managedpolicies-count').html(deprecated_policy_count);
 
     $('[data-toggle="tooltip"]').tooltip();
+
+    // scroll to hash
+    if (window.location.hash != "") {
+        $('.content-body').scrollTop($(window.location.hash).offset().top - $('.content-header').height() + 1);
+    }
 
     // dashboard
     addDashboardData(iam_def, sdk_map);
