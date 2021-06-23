@@ -180,15 +180,13 @@ function readable_date(str) {
 function processManagedPolicy(policy_data, iam_def) {
     effective_policy_table_content = '';
 
-    console.log(policy_data);
-
-    $('#managedpolicytags').html((policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">Possible PrivEsc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : ''));
+    $('#managedpolicytags').html((policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : ''));
 
     for (let unknown_action of policy_data['unknown_actions']) {
         effective_policy_table_content += '<tr>\
-            <td class="tx-medium"><span class="badge badge-warning">Unknown</span></td>\
+            <td class="tx-medium"><span class="badge badge-warning">unknown</span></td>\
             <td class="tx-medium">' + unknown_action['action'] + '</td>\
-            <td class="tx-normal"><span class="badge badge-warning">Unknown</span></td>\
+            <td class="tx-normal"><span class="badge badge-warning">unknown</span></td>\
         </tr>';
     }
     for (let effective_action of policy_data['effective_actions']) {
@@ -199,7 +197,7 @@ function processManagedPolicy(policy_data, iam_def) {
         let effective_action_parts = effective_action['effective_action'].split(":");
 
         effective_policy_table_content += '<tr>\
-            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + '</td>\
+            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
             <td class="tx-medium">' + effective_action['action'] + '</td>\
             <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
         </tr>';
@@ -459,6 +457,31 @@ async function processReferencePage() {
         $('#search-managedpolicies-list').html(html);
     });
 
+    // resource type modal
+    $('#resourceTypeModal').on('show.bs.modal', function (e) {
+        let offset = 1;
+        let rtdstart = "{";
+        let rtdend = "\n}";        
+        let tokens = $(e.relatedTarget).html().split(/(\[\]|\.)/g);
+        for (let token of tokens) {
+            if (token == "[]") {
+                rtdstart += "[\n" + "    ".repeat(offset + 1);
+                rtdend = "\n" + "    ".repeat(offset) + "]" + rtdend;
+                offset += 1;
+            } else if (token == ".") {
+                rtdstart += "{" + "    ".repeat(offset + 1);
+                rtdend = "\n" + "    ".repeat(offset) + "}" + rtdend;
+                offset += 1;
+            } else if (token == "") {
+                // nothing
+            } else {
+                rtdstart += "\n" + "    ".repeat(offset) + "\"" + token + "\": ";
+            }
+        }
+        rtdstart += "\"VALUE\",\n" + "    ".repeat(offset) + "...";
+        $('#resourceTypeDisplay').html(rtdstart + rtdend);
+    });
+
     //
     $('#body-dashboard').attr('style', 'display: none;');
     $('#body-usage').attr('style', 'display: none;');
@@ -507,7 +530,7 @@ async function processReferencePage() {
 
         let condition_keys = [];
         for (let condition_key of first_resource_type['condition_keys']) {
-            condition_keys.push('<a href="#">' + condition_key + '</a>');
+            condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
         }
 
         let rowspan = privilege['resource_types'].length + 1;
@@ -534,7 +557,7 @@ async function processReferencePage() {
         for (let resource_type of privilege['resource_types']) {
             let condition_keys = [];
             for (let condition_key of resource_type['condition_keys']) {
-                condition_keys.push('<a href="#">' + condition_key + '</a>');
+                condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
             }
 
             actions_table_content += '<tr>\
@@ -627,7 +650,7 @@ async function processReferencePage() {
         }
 
         managedpolicies_table_content += '<tr>\
-            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">Unknown Actions</span>' : '') + (managedpolicy['privesc'] ? ' <span class="badge badge-warning">Possible PrivEsc</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">Malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">Deprecated</span>' : '') + '</td>\
+            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (managedpolicy['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : '') + '</td>\
             <td class="tx-normal">' + managedpolicy['access_levels'].join(", ") + '</td>\
             <td class="tx-normal">' + managedpolicy['version'] + '</td>\
             <td class="tx-normal" style="text-decoration-line: underline; text-decoration-style: dotted;">' + readable_date(managedpolicy['createdate']) + '</td>\
@@ -640,6 +663,7 @@ async function processReferencePage() {
             $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
             $('.managedpolicyname').html(managedpolicy['name']);
             processManagedPolicy(policy_data, iam_def);
+            $('#managedpolicy-json-link').attr('href', 'https://raw.githubusercontent.com/iann0036/iam-dataset/main/managedpolicies/' + managedpolicy['name'] + '.json');
         }
     }
 

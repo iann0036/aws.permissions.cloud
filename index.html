@@ -371,39 +371,115 @@
           <div class="row row-xs">
             <div class="col-lg-12 col-xl-12 mg-t-12">
               <div class="card card-body">
-                <p class="df-lead">blahblah.</p>
+                <p class="df-lead">The permissions.cloud website uses a variety of information gathered within the <a target="_blank" href="https://github.com/iann0036/iam-dataset">IAM Dataset</a> and exposes that information in a clean, easy-to-read format.</p>
 
                 <hr class="mg-y-40">
 
-                <h4 class="mg-b-10">blahblah</h4>
-                <p class="mg-b-30">blahblah.</p>
+                <h4 class="mg-b-10">Using the Dashboard</h4>
+                <p class="mg-b-30">The dashboard has a small selection of statistics about the global state of IAM permissions and API methods.</p>
 
                 <hr class="mg-y-40">
 
-                <h4 class="mg-b-10">blahblah</h4>
+                <h4 class="mg-b-10">Using Managed Policies</h4>
+                <p class="mg-b-10">The managed policies section lists all known <a target="_blank" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html#aws-managed-policies">AWS Managed Policies</a> with the ability to view individual policies in-depth. Additional analysis is presented about the effective IAM permissions the policy provides.</p>
+                <p class="mg-b-30">The following table represents the attributes available on either a managed policy or an effective action within it:</p>
+
+                <div class="table-responsive mg-t-25">
+                  <table class="table table-components">
+                    <thead>
+                      <tr>
+                        <th class="wd-40p">Tag</th>
+                        <th class="wd-60p">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><span class="badge badge-warning">unknown actions</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-warning">unknown</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-warning">possible privesc</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-danger">malformed</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-danger">deprecated</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <hr class="mg-y-40">
+
+                <h4 class="mg-b-10">Using IAM Permissions</h4>
                 <p class="mg-b-30">blahblah.</p>
 
                 <div class="table-responsive mg-t-25">
                   <table class="table table-components">
                     <thead>
                       <tr>
-                        <th class="wd-40p">blahblah</th>
-                        <th class="wd-60p">blahblah</th>
+                        <th class="wd-40p">Tag</th>
+                        <th class="wd-60p">Description</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>blahblah</td>
+                        <td><span class="badge badge-primary">required</span></td>
                         <td>blahblah</td>
                       </tr>
                     </tbody>
                   </table>
-                </div><!-- table-responsive -->
+                </div>
 
                 <hr class="mg-y-40">
 
-                <h4 class="mg-b-10">blahblah</h4>
+                <h4 class="mg-b-10">Using API Methods</h4>
                 <p class="mg-b-30">blahblah.</p>
+
+                <div class="table-responsive mg-t-25">
+                  <table class="table table-components">
+                    <thead>
+                      <tr>
+                        <th class="wd-40p">Tag</th>
+                        <th class="wd-60p">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><span class="badge badge-danger">undocumented</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-dark">overridden</span></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">if truthy</span> <i>comparison value</i> <span class="badge badge-info">then</span> <i>success value</i> <span class="badge badge-info">otherwise</span> <i>failure value</i></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">urlencode</span> <i>value</i></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">if ARN matches format</span> <i>value</i></td>
+                        <td>blahblah</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">for the property</span> <i>value</i> <span class="badge badge-info">get first match of the regex pattern</span> <i>regex pattern</i></td>
+                        <td>blahblah</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div><!-- col -->
           </div><!-- row -->
@@ -494,7 +570,7 @@
               <span id="managedpolicytags"></span>
             </div>
             <div class="d-none d-md-block">
-              <button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button>
+              <a id="managedpolicy-json-link" target="_blank"><button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button></a>
             </div>
           </div>
 
@@ -543,10 +619,10 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="resourceTypeModalLabel">Resource Type Information</h5>
+            <h5 class="modal-title" id="resourceTypeModalLabel">API Response Location</h5>
           </div>
           <div class="modal-body">
-            ...
+            <pre id="resourceTypeDisplay"></pre>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
