@@ -371,18 +371,20 @@
           <div class="row row-xs">
             <div class="col-lg-12 col-xl-12 mg-t-12">
               <div class="card card-body">
-                <p class="df-lead">The permissions.cloud website uses a variety of information gathered within the <a target="_blank" href="https://github.com/iann0036/iam-dataset">IAM Dataset</a> and exposes that information in a clean, easy-to-read format.</p>
+                <h4 class="mg-b-10">About permissions.cloud</h4>
+                <p class="mg-b-10">The permissions.cloud website uses a variety of information gathered within the <a target="_blank" href="https://github.com/iann0036/iam-dataset">IAM Dataset</a> and exposes that information in a clean, easy-to-read format.</p>
+                <p class="mg-b-10">permissions.cloud was built in order to provide an alternate, community-driven source of truth for AWS identity. If you would like to contribute to or suggest a feature for this website, please <a target="_blank" href="https://github.com/iann0036/permissions.cloud/issues">raise it</a> in the permissions.cloud repo. If you have found a data issue with the IAM permissions or API methods, please <a target="_blank" href="https://github.com/iann0036/iam-dataset/issues">raise it</a> in the IAM Dataset repo.</p>
 
                 <hr class="mg-y-40">
 
                 <h4 class="mg-b-10">Using the Dashboard</h4>
-                <p class="mg-b-30">The dashboard has a small selection of statistics about the global state of IAM permissions and API methods.</p>
+                <p class="mg-b-10">The dashboard has a small selection of statistics about the global state of IAM permissions and API methods. Some historic IAM permission data is currently missing and as such you may see some unusual jumps in charting.</p>
 
                 <hr class="mg-y-40">
 
                 <h4 class="mg-b-10">Using Managed Policies</h4>
                 <p class="mg-b-10">The managed policies section lists all known <a target="_blank" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html#aws-managed-policies">AWS Managed Policies</a> with the ability to view individual policies in-depth. Additional analysis is presented about the effective IAM permissions the policy provides.</p>
-                <p class="mg-b-30">The following table represents the attributes available on either a managed policy or an effective action within it:</p>
+                <p class="mg-b-10">The following table represents the attributes available on either a managed policy or an effective IAM action within it:</p>
 
                 <div class="table-responsive mg-t-25">
                   <table class="table table-components">
@@ -395,23 +397,23 @@
                     <tbody>
                       <tr>
                         <td><span class="badge badge-warning">unknown actions</span></td>
-                        <td>blahblah</td>
+                        <td>A managed policy tag indicating that the managed policy contains an action that is not documented in the official <a target="_blank" target="https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html">Service Authorization Reference</a>.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-warning">unknown</span></td>
-                        <td>blahblah</td>
+                        <td>A managed policy action tag that indicates the action is not documented in the official <a target="_blank" target="https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html">Service Authorization Reference</a>.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-warning">possible privesc</span></td>
-                        <td>blahblah</td>
+                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could potentially lead to a privilege escalation.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-danger">malformed</span></td>
-                        <td>blahblah</td>
+                        <td>A managed policy tag that indicates the presence of a malformed statement within the policy.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-danger">deprecated</span></td>
-                        <td>blahblah</td>
+                        <td>A managed policy tag that indicates the policy is <a target="_target" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-deprecated.html">deprecated</a>.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -420,7 +422,8 @@
                 <hr class="mg-y-40">
 
                 <h4 class="mg-b-10">Using IAM Permissions</h4>
-                <p class="mg-b-30">blahblah.</p>
+                <p class="mg-b-10">IAM Permissions are available on all service pages. Each IAM permission details its own description, access level, resolved resource type ARN pattern, condition keys, as well as the API methods that are known to consume that permission.</p>
+                <p class="mg-b-10">The following table represents the attributes available on an IAM action:</p>
 
                 <div class="table-responsive mg-t-25">
                   <table class="table table-components">
@@ -433,7 +436,7 @@
                     <tbody>
                       <tr>
                         <td><span class="badge badge-primary">required</span></td>
-                        <td>blahblah</td>
+                        <td>An IAM permission tag that indicates that the presence of an entry matching the preceeding ARN template is required.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -442,7 +445,9 @@
                 <hr class="mg-y-40">
 
                 <h4 class="mg-b-10">Using API Methods</h4>
-                <p class="mg-b-30">blahblah.</p>
+                <p class="mg-b-10">API Methods are available on all service pages. Each API Method details its own description, ARN template format (including special functions), as well as the IAM permissions the action may require. IAM permissions are required unless one of the below tags resolves to non-existance.</p>
+                <p class="mg-b-10">If a variable is not present in the API method request, its value should instead be replaced with an <code>*</code>.</p>
+                <p class="mg-b-10">The following table represents the attributes available on an API method:</p>
 
                 <div class="table-responsive mg-t-25">
                   <table class="table table-components">
@@ -455,27 +460,27 @@
                     <tbody>
                       <tr>
                         <td><span class="badge badge-danger">undocumented</span></td>
-                        <td>blahblah</td>
+                        <td>An API method tag that indicates the method is not documented in the official <a target="_blank" target="https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html">Service Authorization Reference</a> but has been identified as existing and has an associated IAM permission requirement.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-dark">overridden</span></td>
-                        <td>blahblah</td>
+                        <td>A permission ARN template tag that indicated the preceeding template format was manually constructed, overriding any permission ARN format hints.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-info">if truthy</span> <i>comparison value</i> <span class="badge badge-info">then</span> <i>success value</i> <span class="badge badge-info">otherwise</span> <i>failure value</i></td>
-                        <td>blahblah</td>
+                        <td>A permission ARN template tag that resolves to the success value when the comparison value exists and is <i>truthy</i>, otherwise resolving to the failure value, or to non-existance when the failure value is not present.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-info">urlencode</span> <i>value</i></td>
-                        <td>blahblah</td>
+                        <td>A permission ARN template tag that resolves to the URL-encoded version of the specified value.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-info">if ARN matches format</span> <i>value</i></td>
-                        <td>blahblah</td>
+                        <td>A permission ARN template tag that resolves to the value if the value matches the ARN format hints, otherwise to non-existance.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-info">for the property</span> <i>value</i> <span class="badge badge-info">get first match of the regex pattern</span> <i>regex pattern</i></td>
-                        <td>blahblah</td>
+                        <td>A permission ARN template tag that resolves to the first Regex match of the value given the provided pattern, or to non-existance where a first match is not found.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -619,7 +624,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="resourceTypeModalLabel">API Response Location</h5>
+            <h5 class="modal-title" id="resourceTypeModalLabel">API Request Location</h5>
           </div>
           <div class="modal-body">
             <pre id="resourceTypeDisplay"></pre>
