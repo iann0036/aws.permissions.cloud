@@ -12,3 +12,7 @@
 .navbar-search {
     z-index: 1200 !important;
 }
+
+.backdrop {
+    z-index: 1100 !important;
+}
