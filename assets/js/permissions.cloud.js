@@ -396,11 +396,10 @@ async function processReferencePage() {
     }
 
     // Search
-    $('input[type="search"]').on('click', function(e){
+    $('#search-nav').on('click', function(e){
         e.preventDefault();
         $('.navbar-search').addClass('visible');
         $('.backdrop').addClass('show');
-        $('input[type="search"]').blur();
         setTimeout(() => {
             $('.navbar-search-header > input').focus();
         }, 100);
