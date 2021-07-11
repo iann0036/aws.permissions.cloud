@@ -258,37 +258,40 @@ async function addDashboardData(iam_def, sdk_map) {
         }
     }
 
-    var flot1 = $.plot('#flotChart', [{
-        data: ds1,
-        color: '#69b2f8'
-    }, {
-        data: ds2,
-        color: '#d1e6fa'
-    }], {
-        series: {
-            stack: 0,
-            shadowSize: 0,
-            lines: {
+    try {
+        var flot1 = $.plot('#flotChart', [{
+            data: ds1,
+            color: '#69b2f8'
+        }, {
+            data: ds2,
+            color: '#d1e6fa'
+        }], {
+            series: {
+                stack: 0,
+                shadowSize: 0,
+                lines: {
+                    show: true,
+                    lineWidth: 0,
+                    fill: 1
+                }
+            },
+            grid: {
+                borderWidth: 0,
+                aboveData: true
+            },
+            yaxis: {
+                show: false,
+                min: 6000,
+                max: Math.max(ds1[ds1.length-1][1]*1.3, ds2[ds2.length-1][1]*1.3)
+            },
+            xaxis: {
                 show: true,
-                lineWidth: 0,
-                fill: 1
+                ticks: ticks,
+                color: 'rgba(255,255,255,.2)'
             }
-        },
-        grid: {
-            borderWidth: 0,
-            aboveData: true
-        },
-        yaxis: {
-            show: false,
-            min: 6000,
-            max: Math.max(ds1[ds1.length-1][1]*1.3, ds2[ds2.length-1][1]*1.3)
-        },
-        xaxis: {
-            show: true,
-            ticks: ticks,
-            color: 'rgba(255,255,255,.2)'
-        }
-    });
+        });
+    } catch (e) {
+    }
 
     let access_level_counts = {
         'List': 0,
