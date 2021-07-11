@@ -546,7 +546,7 @@ async function processReferencePage() {
 
         let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
 
-        if (privilege['description'].substr(privilege['description'].length-1) != ".") {
+        if (privilege['description'].substr(privilege['description'].length-1) != "." && privilege['description'].length > 1) {
             privilege['description'] += ".";
         }
         
