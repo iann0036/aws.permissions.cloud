@@ -1,0 +1,10 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+    <script/>
+    <ShortName>permissions.cloud</ShortName>
+    <Description>Search AWS IAM permissions</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image width="512" height="512" type="image/png">https://permissions.cloud/assets/img/logo.png</Image>
+    <Url type="application/x-suggestions+json" method="GET" template="http://suggestqueries.google.com/complete/search?output=firefox&amp;q={searchTerms}" />
+    <Url type="text/html" method="GET" template="https://permissions.cloud/?s={searchTerms}" />
+    <SearchForm>https://permissions.cloud/</SearchForm>
+</OpenSearchDescription>
