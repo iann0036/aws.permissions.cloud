@@ -367,6 +367,18 @@ function expand_resource_type(service, resource_type) {
     }
 }
 
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    console.log('Query variable %s not found', variable);
+}
+
 async function processReferencePage() {
     let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
     let iam_def = await iam_def_data.json();
@@ -377,6 +389,18 @@ async function processReferencePage() {
 
     let docs_data = await fetch('https://iann0036.github.io/iam-dataset/docs.json');
     let docs = await docs_data.json();
+
+    // omnibox search
+    if (window.location.search.includes('s=')) {
+        $('.navbar-search').addClass('visible');
+        $('.backdrop').addClass('show');
+        setTimeout(() => {
+            $('.navbar-search-header > input').focus();
+            $('.navbar-search-header > input').val(getQueryVariable('s'));
+        }, 100);
+    }
+
+    //
 
     $('#actions-table tbody').html('');
     
