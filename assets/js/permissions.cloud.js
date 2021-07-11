@@ -368,7 +368,7 @@ function expand_resource_type(service, resource_type) {
 }
 
 async function processReferencePage() {
-    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/js/iam_definition.json');
+    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
     let iam_def = await iam_def_data.json();
     let service = iam_def[0];
 
