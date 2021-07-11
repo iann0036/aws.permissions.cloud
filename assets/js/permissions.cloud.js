@@ -131,6 +131,7 @@ async function getUsedBy(privilege, sdk_map) {
     }
 
     if (used_by_methods.length) {
+        used_by_methods = [...new Set(used_by_methods)]; // dedupe
         used_by_methods.sort();
 
         return used_by_methods.join("<br />");
