@@ -541,7 +541,7 @@ async function processReferencePage() {
             access_class = "tx-pink";
         }
         if (["Unknown"].includes(privilege['access_level'])) {
-            access_class = "tx-grey";
+            access_class = "tx-color-03";
         }
 
         let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
