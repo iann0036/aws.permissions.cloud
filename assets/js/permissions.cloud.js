@@ -390,18 +390,6 @@ async function processReferencePage() {
     let docs_data = await fetch('https://iann0036.github.io/iam-dataset/docs.json');
     let docs = await docs_data.json();
 
-    // omnibox search
-    if (window.location.search.includes('s=')) {
-        $('.navbar-search').addClass('visible');
-        $('.backdrop').addClass('show');
-        setTimeout(() => {
-            $('.navbar-search-header > input').focus();
-            $('.navbar-search-header > input').val(getQueryVariable('s'));
-        }, 100);
-    }
-
-    //
-
     $('#actions-table tbody').html('');
     
     if ($('#reference-list').html() == "") {
@@ -482,6 +470,16 @@ async function processReferencePage() {
         };
         $('#search-managedpolicies-list').html(html);
     });
+
+    // omnibox search
+    if (window.location.search.includes('s=')) {
+        $('.navbar-search').addClass('visible');
+        $('.backdrop').addClass('show');
+        setTimeout(() => {
+            $('.navbar-search-header > input').focus();
+            $('.navbar-search-header > input').val(getQueryVariable('s'));
+        }, 100);
+    }
 
     // resource type modal
     $('#resourceTypeModal').on('show.bs.modal', function (e) {
