@@ -703,7 +703,9 @@ async function processReferencePage() {
 
     // scroll to hash
     if (window.location.hash != "") {
-        $('.content-body').scrollTop($(window.location.hash).offset().top - $('.content-header').height() + 1);
+        try {
+            $('.content-body').scrollTop($(window.location.hash).offset().top - $('.content-header').height() + 1);
+        } catch (e) {}
     }
 
     // dashboard
