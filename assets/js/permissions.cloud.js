@@ -478,6 +478,7 @@ async function processReferencePage() {
         setTimeout(() => {
             $('.navbar-search-header > input').focus();
             $('.navbar-search-header > input').val(getQueryVariable('s'));
+            $('.navbar-search-header > input').trigger('input');
         }, 100);
     }
 
