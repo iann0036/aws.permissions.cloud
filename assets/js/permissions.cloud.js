@@ -261,10 +261,10 @@ async function addDashboardData(iam_def, sdk_map) {
 
     try {
         var flot1 = $.plot('#flotChart', [{
-            data: ds2,
+            data: ds1,
             color: '#69b2f8'
         }, {
-            data: ds1,
+            data: ds2,
             color: '#d1e6fa'
         }], {
             series: {
