@@ -216,7 +216,7 @@ async function addDashboardData(iam_def, sdk_map) {
     let counts = await counts_data.json();
 
     let now = Math.round(new Date() / 1000);
-    let compare_date = now - (370*24*60*60);
+    let compare_date = now - (390*24*60*60);
 
     let ds1 = [];
     let last_ds1 = counts['api'][0]['count'];
