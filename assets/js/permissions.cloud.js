@@ -208,11 +208,7 @@ function processManagedPolicy(policy_data, iam_def) {
 }
 
 function addcomma(val) {
-    if (val >= 1000) {
-        return Math.floor(val/1000).toString() + "," + (val%1000).toString();
-    }
-
-    return val;
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 async function addDashboardData(iam_def, sdk_map) {
