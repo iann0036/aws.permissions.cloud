@@ -389,7 +389,7 @@ async function processReferencePage() {
 
     $('#actions-table tbody').html('');
 
-    iam_def.sort((a, b) => a['prefix'].replace("Amazon ", "").replace("AWS ", "") < b['prefix'].replace("Amazon ", "").replace("AWS ", "") ? -1 : 1)
+    iam_def.sort((a, b) => a['service_name'].replace("Amazon ", "").replace("AWS ", "") < b['service_name'].replace("Amazon ", "").replace("AWS ", "") ? -1 : 1)
     
     if ($('#reference-list').html() == "") {
         for (let service_def of iam_def) {
