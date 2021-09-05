@@ -388,6 +388,8 @@ async function processReferencePage() {
     let docs = await docs_data.json();
 
     $('#actions-table tbody').html('');
+
+    iam_def.sort((a, b) => a['prefix'].replace("Amazon ", "").replace("AWS ", "") < b['prefix'].replace("Amazon ", "").replace("AWS ", "") ? -1 : 1)
     
     if ($('#reference-list').html() == "") {
         for (let service_def of iam_def) {
