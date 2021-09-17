@@ -615,6 +615,8 @@ async function processReferencePage() {
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
+            console.debug(first_action);
+            console.debug(iam_def);
             let template = await getTemplates(first_action, iam_def);
             console.debug("Template for " + first_action['action'] + " is " + template);
             let undocumented = '';
