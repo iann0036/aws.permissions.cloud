@@ -79,9 +79,6 @@ async function getTemplates(action, iam_def) {
     let original_templates = [];
     let processed_templates = [];
 
-    var iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
-    var iam_def = await iam_def_data.json();
-
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
             for (let privilege of service_def['privileges']) {
@@ -380,8 +377,8 @@ function getQueryVariable(variable) {
 }
 
 async function processReferencePage() {
-    var iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
-    var iam_def = await iam_def_data.json();
+    const iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
+    const iam_def = await iam_def_data.json();
     let service = iam_def[0];
 
     let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/map.json');
@@ -618,10 +615,7 @@ async function processReferencePage() {
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
-            console.debug(first_action);
-            console.debug(iam_def);
             let template = await getTemplates(first_action, iam_def);
-            console.debug("Template for " + first_action['action'] + " is " + template);
             let undocumented = '';
             if (first_action['undocumented']) {
                 undocumented = ' <span class="badge badge-danger">undocumented</span>';
