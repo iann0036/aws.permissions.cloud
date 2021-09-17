@@ -73,13 +73,11 @@ function templateReplace(arn, action, resource_mapping_sub) {
     return arnReplace(arn, action, resource_mapping_sub, null);
 }
 
-async function getTemplates(action, iam_def_data) {
+async function getTemplates(action, iam_def) {
     let action_parts = action['action'].split(":");
     let ret = '*';
     let original_templates = [];
     let processed_templates = [];
-
-    var iam_def = await iam_def_data.json();
 
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
