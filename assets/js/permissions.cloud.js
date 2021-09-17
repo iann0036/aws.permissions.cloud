@@ -381,6 +381,7 @@ function getQueryVariable(variable) {
 async function processReferencePage() {
     const iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
     var iam_def = await iam_def_data.json();
+    const iam_def_duplicate = iam_def;
     let service = iam_def[0];
 
     let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/map.json');
@@ -617,7 +618,7 @@ async function processReferencePage() {
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
-            let template = await getTemplates(first_action, iam_def_data);
+            let template = await getTemplates(first_action, iam_def_duplicate);
             let undocumented = '';
             if (first_action['undocumented']) {
                 undocumented = ' <span class="badge badge-danger">undocumented</span>';
@@ -632,7 +633,7 @@ async function processReferencePage() {
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
                 let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
-                let template = await getTemplates(action, iam_def_data);
+                let template = await getTemplates(action, iam_def_duplicate);
                 let undocumented = '';
                 if (action['undocumented']) {
                     undocumented = ' <span class="badge badge-danger">undocumented</span>';
