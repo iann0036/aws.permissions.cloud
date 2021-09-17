@@ -379,7 +379,7 @@ function getQueryVariable(variable) {
 async function processReferencePage() {
     const iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
     var iam_def = await iam_def_data.json();
-    const iam_def_duplicate = iam_def;
+    const iam_def_duplicate = JSON.parse(JSON.stringify(iam_def));
     let service = iam_def[0];
 
     let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/map.json');
