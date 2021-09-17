@@ -81,6 +81,8 @@ async function getTemplates(action, iam_def) {
 
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
+            console.debug("Service for " + action_parts[0] + ":");
+            console.debug(service_def);
             for (let privilege of service_def['privileges']) {
                 if (privilege['privilege'] == action_parts[1]) {
                     for (let resource_type of privilege['resource_types']) {
