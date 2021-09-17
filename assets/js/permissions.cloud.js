@@ -79,6 +79,9 @@ async function getTemplates(action, iam_def) {
     let original_templates = [];
     let processed_templates = [];
 
+    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
+    let iam_def = await iam_def_data.json();
+
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
             for (let privilege of service_def['privileges']) {
