@@ -79,8 +79,8 @@ async function getTemplates(action, iam_def) {
     let original_templates = [];
     let processed_templates = [];
 
-    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
-    let iam_def = await iam_def_data.json();
+    var iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
+    var iam_def = await iam_def_data.json();
 
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
@@ -380,8 +380,8 @@ function getQueryVariable(variable) {
 }
 
 async function processReferencePage() {
-    let iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
-    let iam_def = await iam_def_data.json();
+    var iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/iam_definition.json');
+    var iam_def = await iam_def_data.json();
     let service = iam_def[0];
 
     let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/map.json');
