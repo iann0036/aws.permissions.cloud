@@ -81,8 +81,6 @@ async function getTemplates(action, iam_def) {
 
     for (let service_def of iam_def) {
         if (service_def['prefix'] == action_parts[0]) {
-            console.debug("Service for " + action_parts[0] + ":");
-            console.debug(service_def);
             for (let privilege of service_def['privileges']) {
                 if (privilege['privilege'] == action_parts[1]) {
                     for (let resource_type of privilege['resource_types']) {
@@ -618,6 +616,7 @@ async function processReferencePage() {
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
             let template = await getTemplates(first_action, iam_def);
+            console.debug("Template for " + first_action['action'] + " is " + template);
             let undocumented = '';
             if (first_action['undocumented']) {
                 undocumented = ' <span class="badge badge-danger">undocumented</span>';
