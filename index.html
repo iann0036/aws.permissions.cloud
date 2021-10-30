@@ -402,6 +402,14 @@
                     </thead>
                     <tbody>
                       <tr>
+                        <td><span class="badge badge-info">credentials exposure</span></td>
+                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could produce a response that contains credentials.</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">resource exposure</span></td>
+                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could expose AWS resources to the public.</td>
+                      </tr>
+                      <tr>
                         <td><span class="badge badge-warning">unknown actions</span></td>
                         <td>A managed policy tag indicating that the managed policy contains an action that is not documented in the official <a target="_blank" target="https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html">Service Authorization Reference</a>.</td>
                       </tr>
@@ -412,14 +420,6 @@
                       <tr>
                         <td><span class="badge badge-warning">possible privesc</span></td>
                         <td>A managed policy or managed policy action tag that indicates the presence of an action that could potentially lead to a privilege escalation.</td>
-                      </tr>
-                      <tr>
-                        <td><span class="badge badge-info">credentials exposure</span></td>
-                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could produce a response that contains credentials.</td>
-                      </tr>
-                      <tr>
-                        <td><span class="badge badge-info">resource exposure</span></td>
-                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could expose AWS resources to the public.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-danger">malformed</span></td>
