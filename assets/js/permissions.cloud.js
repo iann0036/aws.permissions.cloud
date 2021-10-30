@@ -181,7 +181,7 @@ function readable_date(str) {
 function processManagedPolicy(policy_data, iam_def) {
     effective_policy_table_content = '';
 
-    $('#managedpolicytags').html((policy_data['resources_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (policy_data['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : ''));
+    $('#managedpolicytags').html((policy_data['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (policy_data['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : ''));
 
     for (let unknown_action of policy_data['unknown_actions']) {
         effective_policy_table_content += '<tr>\
@@ -198,7 +198,7 @@ function processManagedPolicy(policy_data, iam_def) {
         let effective_action_parts = effective_action['effective_action'].split(":");
 
         effective_policy_table_content += '<tr>\
-            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['resources_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (effective_action['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
+            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (effective_action['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
             <td class="tx-medium">' + effective_action['action'] + '</td>\
             <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
         </tr>';
@@ -678,7 +678,7 @@ async function processReferencePage() {
         }
 
         managedpolicies_table_content += '<tr>\
-            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['resources_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (managedpolicy['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (managedpolicy['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : '') + '</td>\
+            <td class="tx-medium"><a href="/managedpolicies/' + managedpolicy['name'] + '">' + managedpolicy['name'] + "</a>" + (managedpolicy['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (managedpolicy['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (managedpolicy['unknown_actions'] ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (managedpolicy['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (managedpolicy['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (managedpolicy['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : '') + '</td>\
             <td class="tx-normal">' + managedpolicy['access_levels'].join(", ") + '</td>\
             <td class="tx-normal">' + managedpolicy['version'] + '</td>\
             <td class="tx-normal" style="text-decoration-line: underline; text-decoration-style: dotted;">' + readable_date(managedpolicy['createdate']) + '</td>\
