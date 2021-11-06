@@ -1230,7 +1230,7 @@ async function processReferencePage() {
             clearTimeout(custom_policy_timer);
             custom_policy_timer = setTimeout(function(){
                 processCustomPolicy(iam_def);
-            }, 2000);
+            }, 800);
         });
     }
 
