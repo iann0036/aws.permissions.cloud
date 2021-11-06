@@ -591,7 +591,7 @@ function processCustomPolicy(iam_def) {
                 var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
                 Object.keys(allactions).forEach(potentialaction => {
                     var re = new RegExp(matchexpression.toLowerCase());
-                    if (re.match(potentialaction.toLowerCase())) {
+                    if (potentialaction.toLowerCase().match(re)) {
                         foundmatch = true;
                         
                         var condition = null;
@@ -644,7 +644,7 @@ function processCustomPolicy(iam_def) {
                 statement['NotAction'].forEach(action => {
                     var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
                     var re = new RegExp(matchexpression.toLowerCase());
-                    if (re.match(potentialaction.toLowerCase())) {
+                    if (potentialaction.toLowerCase().match(re)) {
                         matched = true;
                     }
                 });
