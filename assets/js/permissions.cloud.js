@@ -643,6 +643,7 @@ function processCustomPolicy(iam_def) {
                 var matched = false;
                 statement['NotAction'].forEach(action => {
                     var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
+                    var re = new RegExp(matchexpression.toLowerCase());
                     if (re.match(potentialaction.toLowerCase())) {
                         matched = true;
                     }
