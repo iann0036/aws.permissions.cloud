@@ -589,7 +589,7 @@ function processCustomPolicy(iam_def) {
             statement['Action'].forEach(action => {
                 var foundmatch = false;
                 var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
-                allactions.forEach(potentialaction => {
+                Object.keys(allactions).forEach(potentialaction => {
                     var re = new RegExp(matchexpression.toLowerCase());
                     if (re.match(potentialaction.toLowerCase())) {
                         foundmatch = true;
@@ -639,7 +639,7 @@ function processCustomPolicy(iam_def) {
             if (!Array.isArray(statement['NotAction'])) {
                 statement['NotAction'] = [statement['NotAction']];
             }
-            allactions.forEach(potentialaction => {
+            Object.keys(allactions).forEach(potentialaction => {
                 var matched = false;
                 statement['NotAction'].forEach(action => {
                     var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
