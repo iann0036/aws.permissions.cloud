@@ -70,6 +70,7 @@
           <li class="nav-item" id="nav-general-dashboard"><a href="/" class="nav-link"><span>Dashboard</span></a></li>
           <li class="nav-item" id="nav-general-usage"><a href="/usage" class="nav-link"><span>Reference Usage</span></a></li>
           <li class="nav-item" id="nav-general-managedpolicies"><a href="/managedpolicies" class="nav-link"><span>Managed Policies</span></a></li>
+          <li class="nav-item" id="nav-general-policyevaluator"><a href="/policyevaluator" class="nav-link"><span>Policy Evaluator</span></a></li>
           <li class="nav-label mg-t-25">Reference</li>
           <div id="reference-list"></div>
         </ul>
@@ -619,6 +620,59 @@
                 </div><!-- card-header -->
                 <div class="table-responsive">
                   <table class="table table-dashboard mg-b-0" id="effectivepolicy-table">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
+                        <th>Based On</th>
+                        <th>Access Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+              </div><!-- card -->
+            </div><!-- col -->
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
+
+      <div class="content-body" id="body-policyevaluator" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">General</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Policy Evaluator</li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1">Policy Evaluator</h4>
+            </div>
+          </div>
+
+          <div class="row row-xs">
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card mg-b-10">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">Custom Policy</h6>
+                    <p class="tx-13 tx-color-03 mg-b-10">Enter your IAM policy in the box below.</p>
+                  </div>
+                </div><!-- card-header -->
+                <textarea class="custompolicy mg-t-10 mg-r-10 mg-l-10 mg-b-10"></textarea>
+              </div><!-- card -->
+            </div><!-- col -->
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card mg-b-10">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">Effective Actions</h6>
+                    <p class="tx-13 tx-color-03 mg-b-10">Below is a breakdown of the effective actions for the policy.</p>
+                  </div>
+                </div><!-- card-header -->
+                <div class="table-responsive">
+                  <table class="table table-dashboard mg-b-0" id="customeffectivepolicy-table">
                     <thead>
                       <tr>
                         <th>Action</th>

@@ -1,5 +1,357 @@
 // permissions.cloud Core Functionality
 
+var PRIVESC_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
+    "iam:PassRole",
+    "iam:CreatePolicyVersion",
+    "iam:SetDefaultPolicyVersion",
+    "iam:CreateAccessKey",
+    "iam:CreateLoginProfile",
+    "iam:UpdateLoginProfile",
+    "iam:AttachUserPolicy",
+    "iam:AttachGroupPolicy",
+    "iam:AttachRolePolicy",
+    "iam:PutUserPolicy",
+    "iam:PutGroupPolicy",
+    "iam:PutRolePolicy",
+    "iam:AddUserToGroup",
+    "iam:UpdateAssumeRolePolicy",
+    "iam:CreateServiceLinkedRole",
+    "iam:CreateVirtualMFADevice",
+    "iam:ResyncMFADevice",
+    "iam:EnableMFADevice",
+    "glue:UpdateDevEndpoint",
+    "codestar:CreateProject",
+    "codestar:AssociateTeamMember"
+]
+
+var RESEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
+    "acm-pca:CreatePermission",
+    "acm-pca:DeletePermission",
+    "acm-pca:DeletePolicy",
+    "acm-pca:PutPolicy",
+    "apigateway:UpdateRestApiPolicy",
+    "backup:DeleteBackupVaultAccessPolicy",
+    "backup:PutBackupVaultAccessPolicy",
+    "chime:DeleteVoiceConnectorTerminationCredentials",
+    "chime:PutVoiceConnectorTerminationCredentials",
+    "cloudformation:SetStackPolicy",
+    "cloudsearch:UpdateServiceAccessPolicies",
+    "codeartifact:DeleteDomainPermissionsPolicy",
+    "codeartifact:DeleteRepositoryPermissionsPolicy",
+    "codebuild:DeleteResourcePolicy",
+    "codebuild:DeleteSourceCredentials",
+    "codebuild:ImportSourceCredentials",
+    "codebuild:PutResourcePolicy",
+    "codeguru-profiler:PutPermission",
+    "codeguru-profiler:RemovePermission",
+    "codestar:AssociateTeamMember",
+    "codestar:CreateProject",
+    "codestar:DeleteProject",
+    "codestar:DisassociateTeamMember",
+    "codestar:UpdateTeamMember",
+    "cognito-identity:CreateIdentityPool",
+    "cognito-identity:DeleteIdentities",
+    "cognito-identity:DeleteIdentityPool",
+    "cognito-identity:GetId",
+    "cognito-identity:MergeDeveloperIdentities",
+    "cognito-identity:SetIdentityPoolRoles",
+    "cognito-identity:UnlinkDeveloperIdentity",
+    "cognito-identity:UnlinkIdentity",
+    "cognito-identity:UpdateIdentityPool",
+    "deeplens:AssociateServiceRoleToAccount",
+    "ds:CreateConditionalForwarder",
+    "ds:CreateDirectory",
+    "ds:CreateMicrosoftAD",
+    "ds:CreateTrust",
+    "ds:ShareDirectory",
+    "ec2:CreateNetworkInterfacePermission",
+    "ec2:DeleteNetworkInterfacePermission",
+    "ec2:ModifySnapshotAttribute",
+    "ec2:ModifyVpcEndpointServicePermissions",
+    "ec2:ResetSnapshotAttribute",
+    "ecr:DeleteRepositoryPolicy",
+    "ecr:SetRepositoryPolicy",
+    "elasticfilesystem:DeleteFileSystemPolicy",
+    "elasticfilesystem:PutFileSystemPolicy",
+    "elasticmapreduce:PutBlockPublicAccessConfiguration",
+    "es:CreateElasticsearchDomain",
+    "es:UpdateElasticsearchDomainConfig",
+    "glacier:AbortVaultLock",
+    "glacier:CompleteVaultLock",
+    "glacier:DeleteVaultAccessPolicy",
+    "glacier:InitiateVaultLock",
+    "glacier:SetDataRetrievalPolicy",
+    "glacier:SetVaultAccessPolicy",
+    "glue:DeleteResourcePolicy",
+    "glue:PutResourcePolicy",
+    "greengrass:AssociateServiceRoleToAccount",
+    "health:DisableHealthServiceAccessForOrganization",
+    "health:EnableHealthServiceAccessForOrganization",
+    "iam:AddClientIDToOpenIDConnectProvider",
+    "iam:AddRoleToInstanceProfile",
+    "iam:AddUserToGroup",
+    "iam:AttachGroupPolicy",
+    "iam:AttachRolePolicy",
+    "iam:AttachUserPolicy",
+    "iam:ChangePassword",
+    "iam:CreateAccessKey",
+    "iam:CreateAccountAlias",
+    "iam:CreateGroup",
+    "iam:CreateInstanceProfile",
+    "iam:CreateLoginProfile",
+    "iam:CreateOpenIDConnectProvider",
+    "iam:CreatePolicy",
+    "iam:CreatePolicyVersion",
+    "iam:CreateRole",
+    "iam:CreateSAMLProvider",
+    "iam:CreateServiceLinkedRole",
+    "iam:CreateServiceSpecificCredential",
+    "iam:CreateUser",
+    "iam:CreateVirtualMFADevice",
+    "iam:DeactivateMFADevice",
+    "iam:DeleteAccessKey",
+    "iam:DeleteAccountAlias",
+    "iam:DeleteAccountPasswordPolicy",
+    "iam:DeleteGroup",
+    "iam:DeleteGroupPolicy",
+    "iam:DeleteInstanceProfile",
+    "iam:DeleteLoginProfile",
+    "iam:DeleteOpenIDConnectProvider",
+    "iam:DeletePolicy",
+    "iam:DeletePolicyVersion",
+    "iam:DeleteRole",
+    "iam:DeleteRolePermissionsBoundary",
+    "iam:DeleteRolePolicy",
+    "iam:DeleteSAMLProvider",
+    "iam:DeleteSSHPublicKey",
+    "iam:DeleteServerCertificate",
+    "iam:DeleteServiceLinkedRole",
+    "iam:DeleteServiceSpecificCredential",
+    "iam:DeleteSigningCertificate",
+    "iam:DeleteUser",
+    "iam:DeleteUserPermissionsBoundary",
+    "iam:DeleteUserPolicy",
+    "iam:DeleteVirtualMFADevice",
+    "iam:DetachGroupPolicy",
+    "iam:DetachRolePolicy",
+    "iam:DetachUserPolicy",
+    "iam:EnableMFADevice",
+    "iam:PassRole",
+    "iam:PutGroupPolicy",
+    "iam:PutRolePermissionsBoundary",
+    "iam:PutRolePolicy",
+    "iam:PutUserPermissionsBoundary",
+    "iam:PutUserPolicy",
+    "iam:RemoveClientIDFromOpenIDConnectProvider",
+    "iam:RemoveRoleFromInstanceProfile",
+    "iam:RemoveUserFromGroup",
+    "iam:ResetServiceSpecificCredential",
+    "iam:ResyncMFADevice",
+    "iam:SetDefaultPolicyVersion",
+    "iam:SetSecurityTokenServicePreferences",
+    "iam:UpdateAccessKey",
+    "iam:UpdateAccountPasswordPolicy",
+    "iam:UpdateAssumeRolePolicy",
+    "iam:UpdateGroup",
+    "iam:UpdateLoginProfile",
+    "iam:UpdateOpenIDConnectProviderThumbprint",
+    "iam:UpdateRole",
+    "iam:UpdateRoleDescription",
+    "iam:UpdateSAMLProvider",
+    "iam:UpdateSSHPublicKey",
+    "iam:UpdateServerCertificate",
+    "iam:UpdateServiceSpecificCredential",
+    "iam:UpdateSigningCertificate",
+    "iam:UpdateUser",
+    "iam:UploadSSHPublicKey",
+    "iam:UploadServerCertificate",
+    "iam:UploadSigningCertificate",
+    "imagebuilder:PutComponentPolicy",
+    "imagebuilder:PutImagePolicy",
+    "imagebuilder:PutImageRecipePolicy",
+    "iot:AttachPolicy",
+    "iot:AttachPrincipalPolicy",
+    "iot:DetachPolicy",
+    "iot:DetachPrincipalPolicy",
+    "iot:SetDefaultAuthorizer",
+    "iot:SetDefaultPolicyVersion",
+    "iotsitewise:CreateAccessPolicy",
+    "iotsitewise:DeleteAccessPolicy",
+    "iotsitewise:UpdateAccessPolicy",
+    "kms:CreateGrant",
+    "kms:PutKeyPolicy",
+    "kms:RetireGrant",
+    "kms:RevokeGrant",
+    "lakeformation:BatchGrantPermissions",
+    "lakeformation:BatchRevokePermissions",
+    "lakeformation:GrantPermissions",
+    "lakeformation:PutDataLakeSettings",
+    "lakeformation:RevokePermissions",
+    "lambda:AddLayerVersionPermission",
+    "lambda:AddPermission",
+    "lambda:DisableReplication",
+    "lambda:EnableReplication",
+    "lambda:RemoveLayerVersionPermission",
+    "lambda:RemovePermission",
+    "license-manager:UpdateServiceSettings",
+    "lightsail:GetRelationalDatabaseMasterUserPassword",
+    "logs:DeleteResourcePolicy",
+    "logs:PutResourcePolicy",
+    "mediapackage:RotateIngestEndpointCredentials",
+    "mediastore:DeleteContainerPolicy",
+    "mediastore:PutContainerPolicy",
+    "opsworks:SetPermission",
+    "opsworks:UpdateUserProfile",
+    "quicksight:CreateAdmin",
+    "quicksight:CreateGroup",
+    "quicksight:CreateGroupMembership",
+    "quicksight:CreateIAMPolicyAssignment",
+    "quicksight:CreateUser",
+    "quicksight:DeleteGroup",
+    "quicksight:DeleteGroupMembership",
+    "quicksight:DeleteIAMPolicyAssignment",
+    "quicksight:DeleteUser",
+    "quicksight:DeleteUserByPrincipalId",
+    "quicksight:RegisterUser",
+    "quicksight:UpdateDashboardPermissions",
+    "quicksight:UpdateGroup",
+    "quicksight:UpdateIAMPolicyAssignment",
+    "quicksight:UpdateTemplatePermissions",
+    "quicksight:UpdateUser",
+    "ram:AcceptResourceShareInvitation",
+    "ram:AssociateResourceShare",
+    "ram:CreateResourceShare",
+    "ram:DeleteResourceShare",
+    "ram:DisassociateResourceShare",
+    "ram:EnableSharingWithAwsOrganization",
+    "ram:RejectResourceShareInvitation",
+    "ram:UpdateResourceShare",
+    "rds:AuthorizeDBSecurityGroupIngress",
+    "rds-db:connect",
+    "redshift:AuthorizeSnapshotAccess",
+    "redshift:CreateClusterUser",
+    "redshift:CreateSnapshotCopyGrant",
+    "redshift:JoinGroup",
+    "redshift:ModifyClusterIamRoles",
+    "redshift:RevokeSnapshotAccess",
+    "route53resolver:PutResolverRulePolicy",
+    "s3:BypassGovernanceRetention",
+    "s3:DeleteAccessPointPolicy",
+    "s3:DeleteBucketPolicy",
+    "s3:ObjectOwnerOverrideToBucketOwner",
+    "s3:PutAccessPointPolicy",
+    "s3:PutAccountPublicAccessBlock",
+    "s3:PutBucketAcl",
+    "s3:PutBucketPolicy",
+    "s3:PutBucketPublicAccessBlock",
+    "s3:PutObjectAcl",
+    "s3:PutObjectVersionAcl",
+    "secretsmanager:DeleteResourcePolicy",
+    "secretsmanager:PutResourcePolicy",
+    "secretsmanager:ValidateResourcePolicy",
+    "servicecatalog:CreatePortfolioShare",
+    "servicecatalog:DeletePortfolioShare",
+    "sns:AddPermission",
+    "sns:CreateTopic",
+    "sns:RemovePermission",
+    "sns:SetTopicAttributes",
+    "sqs:AddPermission",
+    "sqs:CreateQueue",
+    "sqs:RemovePermission",
+    "sqs:SetQueueAttributes",
+    "ssm:ModifyDocumentPermission",
+    "sso:AssociateDirectory",
+    "sso:AssociateProfile",
+    "sso:CreateApplicationInstance",
+    "sso:CreateApplicationInstanceCertificate",
+    "sso:CreatePermissionSet",
+    "sso:CreateProfile",
+    "sso:CreateTrust",
+    "sso:DeleteApplicationInstance",
+    "sso:DeleteApplicationInstanceCertificate",
+    "sso:DeletePermissionSet",
+    "sso:DeletePermissionsPolicy",
+    "sso:DeleteProfile",
+    "sso:DisassociateDirectory",
+    "sso:DisassociateProfile",
+    "sso:ImportApplicationInstanceServiceProviderMetadata",
+    "sso:PutPermissionsPolicy",
+    "sso:StartSSO",
+    "sso:UpdateApplicationInstanceActiveCertificate",
+    "sso:UpdateApplicationInstanceDisplayData",
+    "sso:UpdateApplicationInstanceResponseConfiguration",
+    "sso:UpdateApplicationInstanceResponseSchemaConfiguration",
+    "sso:UpdateApplicationInstanceSecurityConfiguration",
+    "sso:UpdateApplicationInstanceServiceProviderConfiguration",
+    "sso:UpdateApplicationInstanceStatus",
+    "sso:UpdateDirectoryAssociation",
+    "sso:UpdatePermissionSet",
+    "sso:UpdateProfile",
+    "sso:UpdateSSOConfiguration",
+    "sso:UpdateTrust",
+    "sso-directory:AddMemberToGroup",
+    "sso-directory:CreateAlias",
+    "sso-directory:CreateGroup",
+    "sso-directory:CreateUser",
+    "sso-directory:DeleteGroup",
+    "sso-directory:DeleteUser",
+    "sso-directory:DisableUser",
+    "sso-directory:EnableUser",
+    "sso-directory:RemoveMemberFromGroup",
+    "sso-directory:UpdateGroup",
+    "sso-directory:UpdatePassword",
+    "sso-directory:UpdateUser",
+    "sso-directory:VerifyEmail",
+    "storagegateway:DeleteChapCredentials",
+    "storagegateway:SetLocalConsolePassword",
+    "storagegateway:SetSMBGuestPassword",
+    "storagegateway:UpdateChapCredentials",
+    "waf:DeletePermissionPolicy",
+    "waf:PutPermissionPolicy",
+    "waf-regional:DeletePermissionPolicy",
+    "waf-regional:PutPermissionPolicy",
+    "wafv2:CreateWebACL",
+    "wafv2:DeletePermissionPolicy",
+    "wafv2:DeleteWebACL",
+    "wafv2:PutPermissionPolicy",
+    "wafv2:UpdateWebACL",
+    "worklink:UpdateDevicePolicyConfiguration",
+    "workmail:ResetPassword",
+    "workmail:ResetUserPassword",
+    "xray:PutEncryptionConfig"
+]
+
+var CREDEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
+    "chime:CreateApiKey",
+    "codeartifact:GetAuthorizationToken",
+    "codepipeline:PollForJobs",
+    "cognito-identity:GetOpenIdToken",
+    "cognito-identity:GetOpenIdTokenForDeveloperIdentity",
+    "cognito-identity:GetCredentialsForIdentity",
+    "connect:GetFederationToken",
+    "connect:GetFederationTokens",
+    "ec2:GetPasswordData",
+    "ecr:GetAuthorizationToken",
+    "gamelift:RequestUploadCredentials",
+    "iam:CreateAccessKey",
+    "iam:CreateLoginProfile",
+    "iam:CreateServiceSpecificCredential",
+    "iam:ResetServiceSpecificCredential",
+    "iam:UpdateAccessKey",
+    "lightsail:GetInstanceAccessDetails",
+    "lightsail:GetRelationalDatabaseMasterUserPassword",
+    "rds-db:connect",
+    "redshift:GetClusterCredentials",
+    "sso:GetRoleCredentials",
+    "mediapackage:RotateChannelCredentials",
+    "mediapackage:RotateIngestEndpointCredentials",
+    "sts:AssumeRole",
+    "sts:AssumeRoleWithSAML",
+    "sts:AssumeRoleWithWebIdentity",
+    "sts:GetFederationToken",
+    "sts:GetSessionToken"
+]
+
 function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
     if (action['resource_mappings'] && resource_mapping_sub) {
         if (resource_type_name && action['resourcearn_mappings']) {
@@ -205,6 +557,162 @@ function processManagedPolicy(policy_data, iam_def) {
     }
 
     $('#effectivepolicy-table tbody').append(effective_policy_table_content);
+}
+
+function processCustomPolicy(iam_def) {
+    try {
+        policy_json = JSON.parse($('.custompolicy').val());
+    } catch(err) {
+        return;
+    }
+
+    var allactions = {}
+    iam_def.forEach(service => {
+        service['privileges'].forEach(privilege => {
+            allactions[service['prefix'] + ":" + privilege['privilege']] = privilege['access_level']
+        });
+    });
+
+    // parse policy
+    if (!policy_json['Statement'] || !Array.isArray(policy_json['Statement'])) {
+        return;
+    }
+
+    var effective_actions = []
+    var unknown_actions = []
+
+    policy_json['Statement'].forEach(statement => {
+        if (statement['Action'] && statement['Effect'] == "Allow") {
+            if (!Array.isArray(statement['Action'])) {
+                statement['Action'] = [statement['Action']];
+            }
+            statement['Action'].forEach(action => {
+                var foundmatch = false;
+                var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
+                allactions.forEach(potentialaction => {
+                    var re = new RegExp(matchexpression.toLowerCase());
+                    if (re.match(potentialaction.toLowerCase())) {
+                        foundmatch = true;
+                        
+                        var condition = null;
+                        if (statement['Condition']) {
+                            condition = statement['Condition'];
+                        }
+
+                        var privesc = false;
+                        if (PRIVESC_ACTIONS[potentialaction]) {
+                            privesc = true;
+                        }
+                        var resource_exposure = false;
+                        if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                            resource_exposure = true;
+                        }
+                        var credentials_exposure = false;
+                        if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                            credentials_exposure = true;
+                        }
+
+                        effective_actions.push({
+                            'action': action,
+                            'effective_action': potentialaction,
+                            'access_level': allactions[potentialaction],
+                            'condition': condition,
+                            'privesc': privesc,
+                            'resource_exposure': resource_exposure,
+                            'credentials_exposure': credentials_exposure
+                        });
+                    }
+                });
+                if (!foundmatch) {
+                    var condition = null;
+                    if (statement['Condition']) {
+                        condition = statement['Condition'];
+                    }
+
+                    unknown_actions.push({
+                        'action': action,
+                        'condition': condition
+                    });
+                }
+            });
+        } else if (statement['NotAction'] && statement['Effect'] == "Allow") {
+            if (!Array.isArray(statement['NotAction'])) {
+                statement['NotAction'] = [statement['NotAction']];
+            }
+            allactions.forEach(potentialaction => {
+                var matched = false;
+                statement['NotAction'].forEach(action => {
+                    var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
+                    if (re.match(potentialaction.toLowerCase())) {
+                        matched = true;
+                    }
+                });
+                if (matched) {
+                    return;
+                }
+
+                var condition = null;
+                if (statement['Condition']) {
+                    condition = statement['Condition'];
+                }
+
+                var privesc = false;
+                if (PRIVESC_ACTIONS[potentialaction]) {
+                    privesc = true;
+                }
+                var resource_exposure = false;
+                if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                    resource_exposure = true;
+                }
+                var credentials_exposure = false;
+                if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                    credentials_exposure = true;
+                }
+
+                effective_actions.push({
+                    'action': "NotAction",
+                    'effective_action': potentialaction,
+                    'access_level': allactions[potentialaction],
+                    'condition': condition,
+                    'privesc': privesc,
+                    'resource_exposure': resource_exposure,
+                    'credentials_exposure': credentials_exposure
+                });
+            });
+        }
+    });
+
+    policy_data = {
+        'unknown_actions': unknown_actions,
+        'effective_actions': effective_actions
+    };
+
+    // output
+
+    effective_policy_table_content = '';
+
+    for (let unknown_action of policy_data['unknown_actions']) {
+        effective_policy_table_content += '<tr>\
+            <td class="tx-medium"><span class="badge badge-warning">unknown</span></td>\
+            <td class="tx-medium">' + unknown_action['action'] + '</td>\
+            <td class="tx-normal"><span class="badge badge-warning">unknown</span></td>\
+        </tr>';
+    }
+    for (let effective_action of policy_data['effective_actions']) {
+        let access_class = "tx-success";
+        if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
+            access_class = "tx-pink";
+        }
+        let effective_action_parts = effective_action['effective_action'].split(":");
+
+        effective_policy_table_content += '<tr>\
+            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (effective_action['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
+            <td class="tx-medium">' + effective_action['action'] + '</td>\
+            <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
+        </tr>';
+    }
+
+    $('#customeffectivepolicy-table tbody').append(effective_policy_table_content);
 }
 
 function addcomma(val) {
@@ -513,6 +1021,7 @@ async function processReferencePage() {
     $('#body-managedpolicies').attr('style', 'display: none;');
     $('#body-permissions').attr('style', 'display: none;');
     $('#body-managedpolicy').attr('style', 'display: none;');
+    $('#body-policyevaluator').attr('style', 'display: none;');
     if (window.location.pathname == "/") {
         $('#nav-general-dashboard').addClass('active');
         $('#body-dashboard').attr('style', '');
@@ -525,6 +1034,9 @@ async function processReferencePage() {
     } else if (window.location.pathname.startsWith("/managedpolicies")) {
         $('#nav-general-managedpolicies').addClass('active');
         $('#body-managedpolicies').attr('style', '');
+    } else if (window.location.pathname.startsWith("/policyevaluator")) {
+        $('#nav-general-policyevaluator').addClass('active');
+        $('#body-policyevaluator').attr('style', '');
     } else if (window.location.pathname.startsWith("/iam") || window.location.pathname.startsWith("/api")) {
         $('#body-permissions').attr('style', '');
     } else {
@@ -707,6 +1219,13 @@ async function processReferencePage() {
         try {
             $('.content-body').scrollTop($(window.location.hash).offset().top - $('.content-header').height() + 1);
         } catch (e) {}
+    }
+
+    // policy evaluator
+    if (window.location.pathname.startsWith("/policyevaluator")) {
+        $('.custompolicy').on('input', function() {
+            processCustomPolicy(iam_def);
+        });
     }
 
     // dashboard
