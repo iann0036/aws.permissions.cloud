@@ -560,6 +560,8 @@ function processManagedPolicy(policy_data, iam_def) {
 }
 
 function processCustomPolicy(iam_def) {
+    $('#customeffectivepolicy-table tbody').html("");
+
     try {
         policy_json = JSON.parse($('.custompolicy').val());
     } catch(err) {
