@@ -604,15 +604,15 @@ function processCustomPolicy(iam_def) {
                             }
 
                             var privesc = false;
-                            if (PRIVESC_ACTIONS[potentialaction]) {
+                            if (PRIVESC_ACTIONS.includes(potentialaction)) {
                                 privesc = true;
                             }
                             var resource_exposure = false;
-                            if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                            if (RESEXPOSURE_ACTIONS.includes(potentialaction)) {
                                 resource_exposure = true;
                             }
                             var credentials_exposure = false;
-                            if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                            if (CREDEXPOSURE_ACTIONS.includes(potentialaction)) {
                                 credentials_exposure = true;
                             }
 
@@ -662,15 +662,15 @@ function processCustomPolicy(iam_def) {
                     }
 
                     var privesc = false;
-                    if (PRIVESC_ACTIONS[potentialaction]) {
+                    if (PRIVESC_ACTIONS.includes(potentialaction)) {
                         privesc = true;
                     }
                     var resource_exposure = false;
-                    if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                    if (RESEXPOSURE_ACTIONS.includes(potentialaction)) {
                         resource_exposure = true;
                     }
                     var credentials_exposure = false;
-                    if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                    if (CREDEXPOSURE_ACTIONS.includes(potentialaction)) {
                         credentials_exposure = true;
                     }
 
