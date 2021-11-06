@@ -1197,7 +1197,7 @@ async function processReferencePage() {
             if (["Write", "Permissions management"].includes(managedpolicy['access_levels'][i])) {
                 access_class = "tx-pink";
             }
-            if (["Unknown"].includes(managedpolicy['access_level'])) {
+            if (["Unknown"].includes(managedpolicy['access_levels'][i])) {
                 access_class = "tx-color-03";
             }
             managedpolicy['access_levels'][i] = "<span class=\"" + access_class + "\">" + managedpolicy['access_levels'][i] + "</span>";
