@@ -560,162 +560,159 @@ function processManagedPolicy(policy_data, iam_def) {
 }
 
 function processCustomPolicy(iam_def) {
-    $('#customeffectivepolicy-table tbody').html("");
+    effective_policy_table_content = '';
 
     try {
         policy_json = JSON.parse($('.custompolicy').val());
-    } catch(err) {
-        return;
-    }
 
-    var allactions = {}
-    iam_def.forEach(service => {
-        service['privileges'].forEach(privilege => {
-            allactions[service['prefix'] + ":" + privilege['privilege']] = privilege['access_level']
+        var allactions = {}
+        iam_def.forEach(service => {
+            service['privileges'].forEach(privilege => {
+                allactions[service['prefix'] + ":" + privilege['privilege']] = privilege['access_level']
+            });
         });
-    });
 
-    // parse policy
-    if (!policy_json['Statement'] || !Array.isArray(policy_json['Statement'])) {
-        return;
-    }
+        // parse policy
+        if (!policy_json['Statement'] || !Array.isArray(policy_json['Statement'])) {
+            throw "Invalid";
+        }
 
-    var effective_actions = []
-    var unknown_actions = []
+        var effective_actions = []
+        var unknown_actions = []
 
-    policy_json['Statement'].forEach(statement => {
-        if (statement['Action'] && statement['Effect'] == "Allow") {
-            if (!Array.isArray(statement['Action'])) {
-                statement['Action'] = [statement['Action']];
-            }
-            statement['Action'].forEach(action => {
-                var foundmatch = false;
-                var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
-                Object.keys(allactions).forEach(potentialaction => {
-                    var re = new RegExp(matchexpression.toLowerCase());
-                    if (potentialaction.toLowerCase().match(re)) {
-                        foundmatch = true;
-                        
+        policy_json['Statement'].forEach(statement => {
+            if (statement['Action'] && statement['Effect'] == "Allow") {
+                if (!Array.isArray(statement['Action'])) {
+                    statement['Action'] = [statement['Action']];
+                }
+                statement['Action'].forEach(action => {
+                    var foundmatch = false;
+                    var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
+                    Object.keys(allactions).forEach(potentialaction => {
+                        var re = new RegExp(matchexpression.toLowerCase());
+                        if (potentialaction.toLowerCase().match(re)) {
+                            foundmatch = true;
+                            
+                            var condition = null;
+                            if (statement['Condition']) {
+                                condition = statement['Condition'];
+                            }
+
+                            var privesc = false;
+                            if (PRIVESC_ACTIONS[potentialaction]) {
+                                privesc = true;
+                            }
+                            var resource_exposure = false;
+                            if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                                resource_exposure = true;
+                            }
+                            var credentials_exposure = false;
+                            if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                                credentials_exposure = true;
+                            }
+
+                            effective_actions.push({
+                                'action': action,
+                                'effective_action': potentialaction,
+                                'access_level': allactions[potentialaction],
+                                'condition': condition,
+                                'privesc': privesc,
+                                'resource_exposure': resource_exposure,
+                                'credentials_exposure': credentials_exposure
+                            });
+                        }
+                    });
+                    if (!foundmatch) {
                         var condition = null;
                         if (statement['Condition']) {
                             condition = statement['Condition'];
                         }
 
-                        var privesc = false;
-                        if (PRIVESC_ACTIONS[potentialaction]) {
-                            privesc = true;
-                        }
-                        var resource_exposure = false;
-                        if (RESEXPOSURE_ACTIONS[potentialaction]) {
-                            resource_exposure = true;
-                        }
-                        var credentials_exposure = false;
-                        if (CREDEXPOSURE_ACTIONS[potentialaction]) {
-                            credentials_exposure = true;
-                        }
-
-                        effective_actions.push({
+                        unknown_actions.push({
                             'action': action,
-                            'effective_action': potentialaction,
-                            'access_level': allactions[potentialaction],
-                            'condition': condition,
-                            'privesc': privesc,
-                            'resource_exposure': resource_exposure,
-                            'credentials_exposure': credentials_exposure
+                            'condition': condition
                         });
                     }
                 });
-                if (!foundmatch) {
+            } else if (statement['NotAction'] && statement['Effect'] == "Allow") {
+                if (!Array.isArray(statement['NotAction'])) {
+                    statement['NotAction'] = [statement['NotAction']];
+                }
+                Object.keys(allactions).forEach(potentialaction => {
+                    var matched = false;
+                    statement['NotAction'].forEach(action => {
+                        var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
+                        var re = new RegExp(matchexpression.toLowerCase());
+                        if (potentialaction.toLowerCase().match(re)) {
+                            matched = true;
+                        }
+                    });
+                    if (matched) {
+                        return;
+                    }
+
                     var condition = null;
                     if (statement['Condition']) {
                         condition = statement['Condition'];
                     }
 
-                    unknown_actions.push({
-                        'action': action,
-                        'condition': condition
-                    });
-                }
-            });
-        } else if (statement['NotAction'] && statement['Effect'] == "Allow") {
-            if (!Array.isArray(statement['NotAction'])) {
-                statement['NotAction'] = [statement['NotAction']];
-            }
-            Object.keys(allactions).forEach(potentialaction => {
-                var matched = false;
-                statement['NotAction'].forEach(action => {
-                    var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
-                    var re = new RegExp(matchexpression.toLowerCase());
-                    if (potentialaction.toLowerCase().match(re)) {
-                        matched = true;
+                    var privesc = false;
+                    if (PRIVESC_ACTIONS[potentialaction]) {
+                        privesc = true;
                     }
+                    var resource_exposure = false;
+                    if (RESEXPOSURE_ACTIONS[potentialaction]) {
+                        resource_exposure = true;
+                    }
+                    var credentials_exposure = false;
+                    if (CREDEXPOSURE_ACTIONS[potentialaction]) {
+                        credentials_exposure = true;
+                    }
+
+                    effective_actions.push({
+                        'action': "NotAction",
+                        'effective_action': potentialaction,
+                        'access_level': allactions[potentialaction],
+                        'condition': condition,
+                        'privesc': privesc,
+                        'resource_exposure': resource_exposure,
+                        'credentials_exposure': credentials_exposure
+                    });
                 });
-                if (matched) {
-                    return;
-                }
+            }
+        });
 
-                var condition = null;
-                if (statement['Condition']) {
-                    condition = statement['Condition'];
-                }
+        policy_data = {
+            'unknown_actions': unknown_actions,
+            'effective_actions': effective_actions
+        };
 
-                var privesc = false;
-                if (PRIVESC_ACTIONS[potentialaction]) {
-                    privesc = true;
-                }
-                var resource_exposure = false;
-                if (RESEXPOSURE_ACTIONS[potentialaction]) {
-                    resource_exposure = true;
-                }
-                var credentials_exposure = false;
-                if (CREDEXPOSURE_ACTIONS[potentialaction]) {
-                    credentials_exposure = true;
-                }
-
-                effective_actions.push({
-                    'action': "NotAction",
-                    'effective_action': potentialaction,
-                    'access_level': allactions[potentialaction],
-                    'condition': condition,
-                    'privesc': privesc,
-                    'resource_exposure': resource_exposure,
-                    'credentials_exposure': credentials_exposure
-                });
-            });
+        // output
+        for (let unknown_action of policy_data['unknown_actions']) {
+            effective_policy_table_content += '<tr>\
+                <td class="tx-medium"><span class="badge badge-warning">unknown</span></td>\
+                <td class="tx-medium">' + unknown_action['action'] + '</td>\
+                <td class="tx-normal"><span class="badge badge-warning">unknown</span></td>\
+            </tr>';
         }
-    });
+        for (let effective_action of policy_data['effective_actions']) {
+            let access_class = "tx-success";
+            if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
+                access_class = "tx-pink";
+            }
+            let effective_action_parts = effective_action['effective_action'].split(":");
 
-    policy_data = {
-        'unknown_actions': unknown_actions,
-        'effective_actions': effective_actions
-    };
-
-    // output
-
-    effective_policy_table_content = '';
-
-    for (let unknown_action of policy_data['unknown_actions']) {
-        effective_policy_table_content += '<tr>\
-            <td class="tx-medium"><span class="badge badge-warning">unknown</span></td>\
-            <td class="tx-medium">' + unknown_action['action'] + '</td>\
-            <td class="tx-normal"><span class="badge badge-warning">unknown</span></td>\
-        </tr>';
-    }
-    for (let effective_action of policy_data['effective_actions']) {
-        let access_class = "tx-success";
-        if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
-            access_class = "tx-pink";
+            effective_policy_table_content += '<tr>\
+                <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (effective_action['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
+                <td class="tx-medium">' + effective_action['action'] + '</td>\
+                <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
+            </tr>';
         }
-        let effective_action_parts = effective_action['effective_action'].split(":");
-
-        effective_policy_table_content += '<tr>\
-            <td class="tx-medium"><span class="tx-color-03">' + effective_action_parts[0] + ':</span>' + effective_action_parts[1] + (effective_action['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (effective_action['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (effective_action['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + '</td>\
-            <td class="tx-medium">' + effective_action['action'] + '</td>\
-            <td class="tx-normal ' + access_class + '">' + effective_action['access_level'] + '</td>\
-        </tr>';
+    } catch(err) {
+        // do nothing
     }
 
-    $('#customeffectivepolicy-table tbody').append(effective_policy_table_content);
+    $('#customeffectivepolicy-table tbody').html(effective_policy_table_content);
 }
 
 function addcomma(val) {
