@@ -1224,7 +1224,7 @@ async function processReferencePage() {
 
     // policy evaluator
     if (window.location.pathname.startsWith("/policyevaluator")) {
-        $('.custompolicy').on('input', function() {
+        $('.custompolicy').bind('input propertychange', function() {
             processCustomPolicy(iam_def);
         });
     }
