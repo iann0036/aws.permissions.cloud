@@ -22,7 +22,7 @@ var PRIVESC_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/gloss
     "glue:UpdateDevEndpoint",
     "codestar:CreateProject",
     "codestar:AssociateTeamMember"
-]
+];
 
 var RESEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
     "acm-pca:CreatePermission",
@@ -319,7 +319,7 @@ var RESEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/g
     "workmail:ResetPassword",
     "workmail:ResetUserPassword",
     "xray:PutEncryptionConfig"
-]
+];
 
 var CREDEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
     "chime:CreateApiKey",
@@ -350,7 +350,9 @@ var CREDEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/
     "sts:AssumeRoleWithWebIdentity",
     "sts:GetFederationToken",
     "sts:GetSessionToken"
-]
+];
+
+var custom_policy_timer;
 
 function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
     if (action['resource_mappings'] && resource_mapping_sub) {
@@ -1222,9 +1224,13 @@ async function processReferencePage() {
     }
 
     // policy evaluator
+
     if (window.location.pathname.startsWith("/policyevaluator")) {
         $('.custompolicy').bind('input propertychange', function() {
-            processCustomPolicy(iam_def);
+            clearTimeout(custom_policy_timer);
+            custom_policy_timer = setTimeout(function(){
+                processCustomPolicy(iam_def);
+            }, 2000);
         });
     }
 
