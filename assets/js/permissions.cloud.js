@@ -811,7 +811,8 @@ async function addDashboardData(iam_def, sdk_map) {
         'Read': 0,
         'Tagging': 0,
         'Write': 0,
-        'Permissions management': 0
+        'Permissions management': 0,
+        'Unknown': 0
     }
     let access_level_total = 0;
 
@@ -823,10 +824,10 @@ async function addDashboardData(iam_def, sdk_map) {
     }
 
     var datapie = {
-        labels: ['List', 'Read', 'Tagging', 'Write', 'Permissions management'],
+        labels: ['List', 'Read', 'Tagging', 'Write', 'Permissions management', 'Unknown'],
         datasets: [{
             data: Object.values(access_level_counts),
-            backgroundColor: ['#7ee5e5', '#7ebcff', '#ffe082', '#fdbd88', '#f77eb9']
+            backgroundColor: ['#7ee5e5', '#7ebcff', '#ffe082', '#fdbd88', '#f77eb9', '#ededed']
         }]
     };
 
@@ -840,6 +841,8 @@ async function addDashboardData(iam_def, sdk_map) {
     $('#dashboard-write-percent').html(Math.round(access_level_counts['Write'] / access_level_total * 100).toString() + "%");
     $('#dashboard-permissionsmanagement-count').html(addcomma(access_level_counts['Permissions management']));
     $('#dashboard-permissionsmanagement-percent').html(Math.round(access_level_counts['Permissions management'] / access_level_total * 100).toString() + "%");
+    $('#dashboard-unknown-count').html(addcomma(access_level_counts['Unknown']));
+    $('#dashboard-unknown-percent').html(Math.round(access_level_counts['Unknown'] / access_level_total * 100).toString() + "%");
 
     $('#dashboard-iam-total').html(addcomma(access_level_total));
     $('#dashboard-api-total').html(addcomma(counts['api'][counts['api'].length-1]['count']));
