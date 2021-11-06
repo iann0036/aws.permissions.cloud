@@ -549,6 +549,9 @@ function processManagedPolicy(policy_data, iam_def) {
         if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
             access_class = "tx-pink";
         }
+        if (["Unknown"].includes(effective_action['access_level'])) {
+            access_class = "tx-color-03";
+        }
         let effective_action_parts = effective_action['effective_action'].split(":");
 
         effective_policy_table_content += '<tr>\
@@ -701,6 +704,9 @@ function processCustomPolicy(iam_def) {
             let access_class = "tx-success";
             if (["Write", "Permissions management"].includes(effective_action['access_level'])) {
                 access_class = "tx-pink";
+            }
+            if (["Unknown"].includes(effective_action['access_level'])) {
+                access_class = "tx-color-03";
             }
             let effective_action_parts = effective_action['effective_action'].split(":");
 
@@ -1187,6 +1193,9 @@ async function processReferencePage() {
             let access_class = "tx-success";
             if (["Write", "Permissions management"].includes(managedpolicy['access_levels'][i])) {
                 access_class = "tx-pink";
+            }
+            if (["Unknown"].includes(managedpolicy['access_level'])) {
+                access_class = "tx-color-03";
             }
             managedpolicy['access_levels'][i] = "<span class=\"" + access_class + "\">" + managedpolicy['access_levels'][i] + "</span>";
         }
