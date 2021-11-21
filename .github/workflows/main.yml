@@ -1,4 +1,4 @@
-name: Publish permissions.cloud
+name: Publish aws.permissions.cloud
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
 
     - name: Copy files to origin S3 bucket
       run: |
-        aws s3 cp --cache-control max-age=300 --recursive . s3://permissions.cloud/ --exclude ".git/*" --exclude ".github/*" --exclude "*.md" --exclude "LICENSE"
+        aws s3 cp --cache-control max-age=300 --recursive . s3://aws.permissions.cloud/ --exclude ".git/*" --exclude ".github/*" --exclude "*.md" --exclude "LICENSE"
