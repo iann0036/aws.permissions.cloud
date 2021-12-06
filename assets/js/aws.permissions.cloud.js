@@ -1248,10 +1248,10 @@ async function processReferencePage() {
 
     // dashboard
     addDashboardData(iam_def, sdk_map);
+
+    $(() => {
+        $(".table-responsive").floatingScroll();
+    });    
 }
 
 processReferencePage();
-
-$(() => {
-    $(".table-responsive").floatingScroll();
-});
