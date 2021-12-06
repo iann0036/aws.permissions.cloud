@@ -1251,3 +1251,7 @@ async function processReferencePage() {
 }
 
 processReferencePage();
+
+$(() => {
+    $(".table-responsive").floatingScroll();
+});

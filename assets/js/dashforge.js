@@ -7,11 +7,11 @@ $(function(){
   ////////// NAVBAR //////////
 
   // Initialize PerfectScrollbar of navbar menu for mobile only
-  if(window.matchMedia('(max-width: 991px)').matches) {
-    const psNavbar = new PerfectScrollbar('#navbarMenu', {
-      suppressScrollX: true
-    });
-  }
+  // if(window.matchMedia('(max-width: 991px)').matches) {
+  //   const psNavbar = new PerfectScrollbar('#navbarMenu', {
+  //     suppressScrollX: true
+  //   });
+  // }
 
   // Showing sub-menu of active menu on navbar when mobile
   function showNavbarActiveSub() {
