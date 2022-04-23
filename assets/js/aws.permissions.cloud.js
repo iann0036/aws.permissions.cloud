@@ -794,7 +794,7 @@ async function addDashboardData(iam_def, sdk_map) {
                 aboveData: true
             },
             yaxis: {
-                show: true,
+                show: false,
                 min: 9000,
                 max: Math.max(ds1[ds1.length-1][1]*1.3, ds2[ds2.length-1][1]*1.3)
             },
