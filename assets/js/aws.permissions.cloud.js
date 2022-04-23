@@ -349,7 +349,8 @@ var CREDEXPOSURE_ACTIONS = [ // https://cloudsplaining.readthedocs.io/en/latest/
     "sts:assumerolewithsaml",
     "sts:assumerolewithwebidentity",
     "sts:getfederationtoken",
-    "sts:getsessiontoken"
+    "sts:getsessiontoken",
+    "cognito-idp:describeuserpoolclient"
 ];
 
 var custom_policy_timer;
