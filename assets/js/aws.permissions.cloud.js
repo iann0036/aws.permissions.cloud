@@ -1246,7 +1246,7 @@ async function processReferencePage() {
         }
 
         $('#bytag-actions-table tbody').append(bytag_actions_table_content);
-        $('#bytag-iam-count').html(bytag_iam_count);
+        $('.bytag-iam-count').html(bytag_iam_count);
     }
 
     // managed policies
