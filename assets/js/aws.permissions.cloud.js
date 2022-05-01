@@ -1082,7 +1082,7 @@ async function processReferencePage() {
 
         let condition_keys = [];
         for (let condition_key of first_resource_type['condition_keys']) {
-            condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
+            condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
         }
 
         let rowspan = privilege['resource_types'].length + 1;
@@ -1112,7 +1112,7 @@ async function processReferencePage() {
         for (let resource_type of privilege['resource_types']) {
             let condition_keys = [];
             for (let condition_key of resource_type['condition_keys']) {
-                condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
             }
 
             actions_table_content += '<tr>\
@@ -1179,7 +1179,7 @@ async function processReferencePage() {
 
     // by tag
     if (window.location.pathname.startsWith("/tag")) {
-        let tag = window.location.pathname.replace(/\/tag\//g, "");
+        let tag = decodeURIComponent(window.location.pathname.replace(/\/tag\//g, ""));
         let bytag_actions_table_content = '';
         let bytag_iam_count = 0;
 
@@ -1201,7 +1201,7 @@ async function processReferencePage() {
 
                     let condition_keys = [];
                     for (let condition_key of first_resource_type['condition_keys']) {
-                        condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                        condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
                     }
 
                     let rowspan = privilege['resource_types'].length + 1;
@@ -1231,7 +1231,7 @@ async function processReferencePage() {
                     for (let resource_type of privilege['resource_types']) {
                         let condition_keys = [];
                         for (let condition_key of resource_type['condition_keys']) {
-                            condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                            condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
                         }
 
                         bytag_actions_table_content += '<tr>\
