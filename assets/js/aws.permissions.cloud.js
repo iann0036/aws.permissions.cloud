@@ -1185,23 +1185,17 @@ async function processReferencePage() {
 
         $('.tagname').html(tag);
 
-        console.log("1");
-
-        for (let i=0; i<iam_def_data.length; i++) {
-            console.log("2");
-            for (let j=0; j<iam_def_data[i]['privileges'].length; j++) {
-                console.log("3");
+        for (let i=0; i<iam_def.length; i++) {
+            for (let j=0; j<iam_def[i]['privileges'].length; j++) {
                 let has_tag = false;
-                for (let k=0; k<iam_def_data[i]['privileges'][j]['resource_types'].length; k++) {
-                    if (iam_def_data[i]['privileges'][j]['resource_types'][k]['condition_keys'].includes(tag)) {
+                for (let k=0; k<iam_def[i]['privileges'][j]['resource_types'].length; k++) {
+                    if (iam_def[i]['privileges'][j]['resource_types'][k]['condition_keys'].includes(tag)) {
                         has_tag = true;
                     }
                 }
-                console.log("-");
                 if (has_tag) {
-                    console.warn("#");
-                    let service = iam_def_data[i];
-                    let privilege = iam_def_data[i]['privileges'][j];
+                    let service = iam_def[i];
+                    let privilege = iam_def[i]['privileges'][j];
                     
                     let first_resource_type = privilege['resource_types'].shift();
 
