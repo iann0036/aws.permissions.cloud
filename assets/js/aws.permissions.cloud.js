@@ -1082,7 +1082,7 @@ async function processReferencePage() {
 
         let condition_keys = [];
         for (let condition_key of first_resource_type['condition_keys']) {
-            condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+            condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
         }
 
         let rowspan = privilege['resource_types'].length + 1;
@@ -1112,7 +1112,7 @@ async function processReferencePage() {
         for (let resource_type of privilege['resource_types']) {
             let condition_keys = [];
             for (let condition_key of resource_type['condition_keys']) {
-                condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+                condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
             }
 
             actions_table_content += '<tr>\
@@ -1201,7 +1201,7 @@ async function processReferencePage() {
 
                     let condition_keys = [];
                     for (let condition_key of first_resource_type['condition_keys']) {
-                        condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+                        condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
                     }
 
                     let rowspan = privilege['resource_types'].length + 1;
@@ -1231,7 +1231,7 @@ async function processReferencePage() {
                     for (let resource_type of privilege['resource_types']) {
                         let condition_keys = [];
                         for (let condition_key of resource_type['condition_keys']) {
-                            condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+                            condition_keys.push('<a target="_blank" href="/tag/' + condition_key + '">' + condition_key + '</a>');
                         }
 
                         bytag_actions_table_content += '<tr>\
