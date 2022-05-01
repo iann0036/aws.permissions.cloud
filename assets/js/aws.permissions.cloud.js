@@ -1193,7 +1193,9 @@ async function processReferencePage() {
                         has_tag = true;
                     }
                 }
+                console.log("-");
                 if (has_tag) {
+                    console.warn("#");
                     let service = iam_def_data[i];
                     let privilege = iam_def_data[i]['privileges'][j];
                     
