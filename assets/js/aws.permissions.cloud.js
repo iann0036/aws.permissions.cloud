@@ -1177,8 +1177,73 @@ async function processReferencePage() {
     $('.api-count').html(api_count.toString());
     $('#methods-table tbody').append(method_table_content);
 
-    // managed policies
+    // by tag
+    if (window.location.pathname.startsWith("/tag")) {
+        let tag = window.location.pathname.replace(/\/tag\//g, "");
+        let bytag_actions_table_content = '';
 
+        for (let i=0; i<iam_def_data.length; i++) {
+            for (let j=0; j<iam_def_data[i]['privileges'].length; j++) {
+                let has_tag = false;
+                for (let k=0; k<iam_def_data[i]['privileges'][j]['resource_types'].length; k++) {
+                    if (iam_def_data[i]['privileges'][j]['resource_types'][k]['condition_keys'].includes(tag)) {
+                        has_tag = true;
+                    }
+                }
+                if (has_tag) {
+                    let service = iam_def_data[i];
+                    let privilege = iam_def_data[i]['privileges'][j];
+                    
+                    let first_resource_type = privilege['resource_types'].shift();
+
+                    let condition_keys = [];
+                    for (let condition_key of first_resource_type['condition_keys']) {
+                        condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+                    }
+
+                    let rowspan = privilege['resource_types'].length + 1;
+                    let access_class = "tx-success";
+                    if (["Write", "Permissions management"].includes(privilege['access_level'])) {
+                        access_class = "tx-pink";
+                    }
+                    if (["Unknown"].includes(privilege['access_level'])) {
+                        access_class = "tx-color-03";
+                    }
+
+                    let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+
+                    if (privilege['description'].substr(privilege['description'].length-1) != "." && privilege['description'].length > 1) {
+                        privilege['description'] += ".";
+                    }
+                    
+                    bytag_actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
+                        <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</td>\
+                        <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
+                        <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
+                        <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
+                        <td class="tx-medium">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
+                        <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
+                    </tr>';
+
+                    for (let resource_type of privilege['resource_types']) {
+                        let condition_keys = [];
+                        for (let condition_key of resource_type['condition_keys']) {
+                            condition_keys.push('<a target="_blank" href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_' + service['service_name'].replace(/ /g, "").toLowerCase() + '.html#' + service['service_name'].replace(/ /g, "").toLowerCase() + '-policy-keys">' + condition_key + '</a>');
+                        }
+
+                        bytag_actions_table_content += '<tr>\
+                            <td class="tx-medium" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
+                            <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
+                        </tr>';
+                    }
+                }
+            }
+        }
+
+        $('#bytag-actions-table tbody').append(bytag_actions_table_content);
+    }
+
+    // managed policies
     let managedpolicies_table_content = '';
     let managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/managed_policies.json');
     let managedpolicies = await managedpolicies_data.json();
