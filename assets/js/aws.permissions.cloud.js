@@ -1182,6 +1182,8 @@ async function processReferencePage() {
         let tag = window.location.pathname.replace(/\/tag\//g, "");
         let bytag_actions_table_content = '';
 
+        $('.tagname').html(tag);
+
         for (let i=0; i<iam_def_data.length; i++) {
             for (let j=0; j<iam_def_data[i]['privileges'].length; j++) {
                 let has_tag = false;
