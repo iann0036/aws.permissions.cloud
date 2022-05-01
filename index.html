@@ -262,6 +262,146 @@
         </div><!-- container -->
       </div>
 
+      <div class="content-body" id="body-bytag" style="display: none;">
+        <div class="container pd-x-0">
+          <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">
+            <div>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style1 mg-b-10">
+                  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">For tag <span class='tagname'></span></li>
+                </ol>
+              </nav>
+              <h4 class="mg-b-0 tx-spacing--1">Permissions Reference for tag <span class='tagname'></span></h4>
+            </div>
+            <div class="d-none d-md-block">
+              <a id="permissions-json-link" href="https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json" target="_blank"><button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button></a>
+              <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-iam api-link" style="display: none;"><i data-feather="code" class="wd-10 mg-r-5"></i> Switch to API</button>
+              <button class="btn btn-sm pd-x-15 btn-primary btn-uppercase mg-l-5 display-api iam-link" style="display: none;"><i data-feather="lock" class="wd-10 mg-r-5"></i> Switch to IAM</button>
+            </div>
+          </div>
+
+          <div class="row row-xs">
+            <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card mg-b-10 display-iam" style="display: none;">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">IAM Actions which include <span class='tagname'></span></h6>
+                    <p class="tx-13 tx-color-03 mg-b-0">You can specify the following actions in the Action element of an IAM policy statement.</p>
+                  </div>
+                  <div class="d-flex mg-t-20 mg-sm-t-0">
+                    <div class="btn-group flex-fill">
+                      <button class="btn btn-white btn-xs active">IAM</button>
+                      <button class="btn btn-white btn-xs api-link">API</button>
+                    </div>
+                  </div>
+                </div><!-- card-header -->
+                <div class="card-body pd-y-30">
+                  <div class="d-sm-flex">
+                    <div class="media">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-teal tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-6">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold tx-nowrap mg-b-5 mg-md-b-8">IAM Actions</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 iam-count">-</h4>
+                      </div>
+                    </div>
+                    <div class="media mg-t-20 mg-sm-t-0 mg-sm-l-15 mg-md-l-40">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-primary tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-4">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold mg-b-5 mg-md-b-8">API Methods</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 api-count">-</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- card-body -->
+                <div class="table-responsive">
+                  <table class="table table-dashboard mg-b-0" id="bytag-actions-table">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>Used By</th>
+                        <th>Access Level</th>
+                        <th>Resource Types</th>
+                        <th>Condition Keys</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+              </div><!-- card -->
+
+
+              <div class="card mg-b-10 display-api" style="display: none;">
+                <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
+                  <div>
+                    <h6 class="mg-b-5">API Methods which include <span class='tagname'></span></h6>
+                    <p class="tx-13 tx-color-03 mg-b-0">You can use the following methods in the AWS CLI, SDKs or API.</p>
+                  </div>
+                  <div class="d-flex mg-t-20 mg-sm-t-0">
+                    <div class="btn-group flex-fill">
+                      <button class="btn btn-white btn-xs iam-link">IAM</button>
+                      <button class="btn btn-white btn-xs active">API</button>
+                    </div>
+                  </div>
+                </div><!-- card-header -->
+                <div class="card-body pd-y-30">
+                  <div class="d-sm-flex">
+                    <div class="media">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-teal tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-6">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold tx-nowrap mg-b-5 mg-md-b-8">IAM Actions</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 iam-count">-</h4>
+                      </div>
+                    </div>
+                    <div class="media mg-t-20 mg-sm-t-0 mg-sm-l-15 mg-md-l-40">
+                      <div class="wd-40 wd-md-50 ht-40 ht-md-50 bg-primary tx-white mg-r-10 mg-md-r-10 d-flex align-items-center justify-content-center rounded op-4">
+                        <i data-feather="bar-chart-2"></i>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="tx-sans tx-uppercase tx-10 tx-spacing-1 tx-color-03 tx-semibold mg-b-5 mg-md-b-8">API Methods</h6>
+                        <h4 class="tx-20 tx-sm-18 tx-md-20 tx-normal tx-rubik mg-b-0 api-count">-</h4>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- card-body -->
+                <div class="table-responsive">
+                  <table class="table table-dashboard mg-b-0" id="bytag-methods-table">
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>IAM Action</th>
+                        <th>ARN Template&nbsp;&nbsp;<a onclick="swapARN()" style="text-transform: none;" href="#" class="badge badge-secondary"><i class="fas fa-exchange-alt"></i> Show <span id="arn-template-state">Original</span></a></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div><!-- table-responsive -->
+              </div><!-- card -->
+
+              <div class="card card-body ht-lg-100">
+                <div class="media">
+                  <span class="tx-color-04"><i data-feather="download" class="wd-60 ht-60"></i></span>
+                  <div class="media-body mg-l-20">
+                    <h6 class="mg-b-10">Download the permissions in JSON format.</h6>
+                    <p class="tx-color-03 mg-b-0">Consume the above permissions with your own tooling.</p>
+                  </div>
+                </div><!-- media -->
+              </div>
+            </div><!-- col -->
+          </div><!-- row -->
+        </div><!-- container -->
+      </div>
+
       <div class="content-body" id="body-dashboard" style="display: none;">
         <div class="container pd-x-0">
           <div class="d-sm-flex align-items-center justify-content-between mg-b-20 mg-lg-b-25 mg-xl-b-30">

@@ -1032,6 +1032,7 @@ async function processReferencePage() {
     $('#body-usage').attr('style', 'display: none;');
     $('#body-managedpolicies').attr('style', 'display: none;');
     $('#body-permissions').attr('style', 'display: none;');
+    $('#body-bytag').attr('style', 'display: none;');
     $('#body-managedpolicy').attr('style', 'display: none;');
     $('#body-policyevaluator').attr('style', 'display: none;');
     if (window.location.pathname == "/") {
@@ -1049,6 +1050,8 @@ async function processReferencePage() {
     } else if (window.location.pathname.startsWith("/policyevaluator")) {
         $('#nav-general-policyevaluator').addClass('active');
         $('#body-policyevaluator').attr('style', '');
+    } else if (window.location.pathname.startsWith("/tag")) {
+        $('#body-bytag').attr('style', '');
     } else if (window.location.pathname.startsWith("/iam") || window.location.pathname.startsWith("/api")) {
         $('#body-permissions').attr('style', '');
     } else {
