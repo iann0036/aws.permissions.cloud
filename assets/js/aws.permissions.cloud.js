@@ -1181,6 +1181,7 @@ async function processReferencePage() {
     if (window.location.pathname.startsWith("/tag")) {
         let tag = window.location.pathname.replace(/\/tag\//g, "");
         let bytag_actions_table_content = '';
+        let bytag_iam_count = 0;
 
         $('.tagname').html(tag);
 
@@ -1238,11 +1239,14 @@ async function processReferencePage() {
                             <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
                         </tr>';
                     }
+
+                    bytag_iam_count += 1;
                 }
             }
         }
 
         $('#bytag-actions-table tbody').append(bytag_actions_table_content);
+        $('#bytag-iam-count').html(bytag_iam_count);
     }
 
     // managed policies
