@@ -537,6 +537,7 @@ function processManagedPolicy(policy_data, iam_def) {
     effective_policy_table_content = '';
 
     $('#managedpolicytags').html((policy_data['resource_exposure'] ? ' <span class="badge badge-info">resource exposure</span>' : '') + (policy_data['credentials_exposure'] ? ' <span class="badge badge-info">credentials exposure</span>' : '') + (policy_data['unknown_actions'].length ? ' <span class="badge badge-warning">unknown actions</span>' : '') + (policy_data['privesc'] ? ' <span class="badge badge-warning">possible privesc</span>' : '') + (policy_data['malformed'] ? ' <span class="badge badge-danger">malformed</span>' : '') + (policy_data['deprecated'] ? ' <span class="badge badge-danger">deprecated</span>' : '') + (policy_data['undocumented_actions'] ? ' <span class="badge badge-danger">undocumented actions</span>' : ''));
+    $('#managedpolicyarn').html(policy_data['arn']);
 
     for (let unknown_action of policy_data['unknown_actions']) {
         effective_policy_table_content += '<tr>\
