@@ -683,7 +683,6 @@
               </nav>
               <h4 class="mg-b-0 tx-spacing--1 managedpolicyname"></h4>
               <span id="managedpolicytags"></span><br />
-              <span id="managedpolicyarn" class="badge badge-dark"></span>
             </div>
             <div class="d-none d-md-block">
               <a id="managedpolicy-json-link" target="_blank"><button class="btn btn-sm pd-x-15 btn-white btn-uppercase mg-l-5"><i data-feather="download" class="wd-10 mg-r-5"></i> Download JSON</button></a>
@@ -692,6 +691,27 @@
 
           <div class="row row-xs">
             <div class="col-lg-12 col-xl-12 mg-t-12">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                  <h6 class="lh-5 mg-b-0">Overview</h6>
+                </div><!-- card-header -->
+                <div class="card-body pd-x-20 pd-b-10">
+                  <ul class="list-group list-group-flush mg-b-0 tx-13">
+                    <li class="list-group-item pd-x-0 d-flex justify-content-between">
+                      <span class="tx-medium">Name</span>
+                      <span class="tx-rubik managedpolicyname"></span>
+                    </li>
+                    <li class="list-group-item pd-x-0 d-flex justify-content-between">
+                      <span class="tx-medium">ARN</span>
+                      <span id="managedpolicyarn" class="tx-rubik"></span>
+                    </li>
+                    <li class="list-group-item pd-x-0 d-flex justify-content-between">
+                      <span class="tx-medium">Version</span>
+                      <span id="managedpolicyversion" class="tx-rubik"></span>
+                    </li>
+                  </ul>
+                </div><!-- card-body -->
+              </div>
               <div class="card mg-b-10">
                 <div class="card-header pd-t-20 d-sm-flex align-items-start justify-content-between bd-b-0 pd-b-0">
                   <div>
