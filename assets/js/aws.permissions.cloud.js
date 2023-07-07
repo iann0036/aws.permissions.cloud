@@ -731,7 +731,7 @@ function addcomma(val) {
 }
 
 async function addDashboardData(iam_def, sdk_map) {
-    let counts_data = await fetch('https://iann0036.github.io/iam-dataset/aws/historic-counts.json');
+    let counts_data = await fetch('https://iann0036.github.io/iam-dataset/aws/historic_counts.json');
     let counts = await counts_data.json();
 
     let now = Math.round(new Date() / 1000);
