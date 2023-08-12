@@ -36,6 +36,7 @@
 
     <link rel="preload" href="https://iann0036.github.io/iam-dataset/aws/map.json" as="fetch" crossorigin>
     <link rel="preload" href="https://iann0036.github.io/iam-dataset/aws/docs.json" as="fetch" crossorigin>
+    <link rel="preload" href="https://iann0036.github.io/iam-dataset/aws/tags.json" as="fetch" crossorigin>
     <link rel="preload" href="https://iann0036.github.io/iam-dataset/aws/iam_definition.json" as="fetch" crossorigin>
 
     <!-- omnibox search -->
@@ -496,6 +497,10 @@
                       <tr>
                         <td><span class="badge badge-info">resource exposure</span></td>
                         <td>A managed policy or managed policy action tag that indicates the presence of an action that could expose AWS resources to the public.</td>
+                      </tr>
+                      <tr>
+                        <td><span class="badge badge-info">data access</span></td>
+                        <td>A managed policy or managed policy action tag that indicates the presence of an action that could return data within AWS data stores.</td>
                       </tr>
                       <tr>
                         <td><span class="badge badge-warning">unknown actions</span></td>
