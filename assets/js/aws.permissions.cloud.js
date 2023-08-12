@@ -18,7 +18,7 @@ function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
         for (var resource_mapping_name of Object.keys(action['resource_mappings'])) {
             let template_replacement = templateReplace(action['resource_mappings'][resource_mapping_name]['template'], action, false);
             if (template_replacement == "*") {
-                arn = template_replacement;
+                arn = arn.replace(new RegExp('\\$\\{(' + resource_mapping_name + ')\\}', 'g'), template_replacement);
             } else {
                 arn = arn.replace(new RegExp('\\$\\{(' + resource_mapping_name + ')\\}', 'g'), '<a class="tx-semibold tx-pink" href="#" data-toggle="modal" data-target="#resourceTypeModal">' + template_replacement + '</a>');
             }
