@@ -578,7 +578,7 @@ async function processReferencePage() {
     let docs = await docs_data.json();
 
     let tags_data = await fetch('https://iann0036.github.io/iam-dataset/aws/tags.json');
-    let tags = await docs_data.json();
+    let tags = await tags_data.json();
 
     $('#actions-table tbody').html('');
 
