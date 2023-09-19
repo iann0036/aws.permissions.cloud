@@ -398,6 +398,8 @@ function addcomma(val) {
 }
 
 async function addDashboardData(iam_def, sdk_map) {
+    if (window.location.pathname !== "/") return;
+
     let counts_data = await fetch('https://iann0036.github.io/iam-dataset/aws/historic_counts.json');
     let counts = await counts_data.json();
 
