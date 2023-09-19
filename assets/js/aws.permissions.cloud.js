@@ -295,7 +295,7 @@ function processCustomPolicy(iam_def, tags) {
                                     return;
                                 }
                             }
-                            
+
                             var condition = null;
                             if (statement['Condition']) {
                                 condition = statement['Condition'];
@@ -627,6 +627,21 @@ async function processReferencePage() {
     let tags_data = await fetch('https://iann0036.github.io/iam-dataset/aws/tags.json');
     let tags = await tags_data.json();
 
+    const managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/managed_policies.json');
+    const managedpolicies = await managedpolicies_data.json();
+    for (const managedpolicy of managedpolicies['policies']) {
+        // Enrich for search
+        managedpolicy['effective_action_names'] = managedpolicy['effective_action_names'].map(a => {
+            const fullpriv = a.toLowerCase();
+            const [prefix, privilege] = fullpriv.split(":");
+            return {
+                fullpriv,
+                prefix,
+                privilege,
+            }
+        });
+    }
+
     $('#actions-table tbody').html('');
 
     iam_def.sort((a, b) => a['service_name'].replace("Amazon ", "").replace("AWS ", "") < b['service_name'].replace("Amazon ", "").replace("AWS ", "") ? -1 : 1)
@@ -721,7 +736,7 @@ async function processReferencePage() {
         html = '';
         results = [];
         for (let managedpolicy of managedpolicies['policies']) {
-            if (managedpolicy['name'].toLowerCase().includes(searchterm)) {
+            if (managedpolicy['name'].toLowerCase().includes(searchterm) || managedpolicy['effective_action_names'].some(a => a['fullpriv'].startsWith(searchterm) || a['prefix'].startsWith(searchterm) || a['privilege'].startsWith(searchterm))) {
                 results.push(managedpolicy['name']);
             }
             if (results.length >= 10) break;
@@ -843,7 +858,7 @@ async function processReferencePage() {
             }
 
             actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
-                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-medium"><a href="/actions/' + service['prefix'] + ':' + privilege['privilege'] + '"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</a></td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
                 <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
@@ -1000,8 +1015,6 @@ async function processReferencePage() {
 
     // managed policies
     let managedpolicies_table_content = '';
-    let managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/managed_policies.json');
-    let managedpolicies = await managedpolicies_data.json();
 
     managedpolicies['policies'].sort(function(a, b) {
         if (a['name'] < b['name']) {
@@ -1068,7 +1081,7 @@ async function processReferencePage() {
                 processCustomPolicy(iam_def, tags);
             }, 800);
         });
-        
+
         $('#custompolicy-considerarn').change(function() {
             clearTimeout(custom_policy_timer);
             custom_policy_timer = setTimeout(function(){
