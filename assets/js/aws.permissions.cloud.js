@@ -85,7 +85,7 @@ function templateReplace(arn, action, resource_mapping_sub) {
     return arnReplace(arn, action, resource_mapping_sub, null);
 }
 
-async function getTemplates(action, iam_def) {
+function getTemplates(action, iam_def) {
     let action_parts = action['action'].split(":");
     let ret = '*';
     let original_templates = [];
@@ -131,7 +131,7 @@ async function getTemplates(action, iam_def) {
     return ret;
 }
 
-async function getUsedBy(privilege, sdk_map) {
+function getUsedBy(privilege, sdk_map) {
     let used_by_methods = [];
 
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
@@ -768,7 +768,7 @@ async function processReferencePage() {
             access_class = "tx-color-03";
         }
 
-        let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+        let used_by = getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
 
         if (privilege['description'].substr(privilege['description'].length-1) != "." && privilege['description'].length > 1) {
             privilege['description'] += ".";
@@ -817,7 +817,7 @@ async function processReferencePage() {
             let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
-            let template = await getTemplates(first_action, iam_def_duplicate);
+            let template = getTemplates(first_action, iam_def_duplicate);
             let undocumented = '';
             if (first_action['undocumented']) {
                 undocumented = ' <span class="badge badge-danger">undocumented</span>';
@@ -832,7 +832,7 @@ async function processReferencePage() {
 
             for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
                 let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
-                let template = await getTemplates(action, iam_def_duplicate);
+                let template = getTemplates(action, iam_def_duplicate);
                 let undocumented = '';
                 if (action['undocumented']) {
                     undocumented = ' <span class="badge badge-danger">undocumented</span>';
@@ -887,7 +887,7 @@ async function processReferencePage() {
                         access_class = "tx-color-03";
                     }
 
-                    let used_by = await getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+                    let used_by = getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
 
                     if (privilege['description'].substr(privilege['description'].length-1) != "." && privilege['description'].length > 1) {
                         privilege['description'] += ".";
