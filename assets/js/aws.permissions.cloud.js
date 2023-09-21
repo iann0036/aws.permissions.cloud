@@ -231,9 +231,23 @@ function processCustomPolicy(iam_def, tags) {
         policy_json = JSON.parse($('.custompolicy').val());
 
         var allactions = {}
+        const actionToArnPattern = {}
         iam_def.forEach(service => {
             service['privileges'].forEach(privilege => {
                 allactions[service['prefix'] + ":" + privilege['privilege']] = privilege['access_level']
+
+                const resourceNameToArnPattern = {};
+                service['resources'].forEach(res => {
+                    resourceNameToArnPattern[res['resource']] = new RegExp(
+                        res['arn']
+                            // AWS Backup's recoveryPoint is the only one that has this pattern.
+                            .replace("${Vendor}",service['prefix'])
+                            .replace(/\*/g, "[^:]+")
+                            .replace(/\$\{[^}]+}/g, "[^:/]+"));
+                });
+                actionToArnPattern[service['prefix'] + ":" + privilege['privilege']] = privilege['resource_types']
+                    .filter(rt => rt['resource_type'] !== "")
+                    .map(rt => resourceNameToArnPattern[rt["resource_type"].replace("*", "")]);
             });
         });
 
@@ -308,6 +322,16 @@ function processCustomPolicy(iam_def, tags) {
                 if (!Array.isArray(statement['NotAction'])) {
                     statement['NotAction'] = [statement['NotAction']];
                 }
+                let resources;
+                if (typeof statement['Resource'] === "string") {
+                    resources = [statement['Resource']]
+                } else if (Array.isArray(statement['Resource'])) {
+                    resources = statement['Resource'];
+                } else {
+                    // No resource specified or invalid type
+                    resources = ["*"];
+                }
+                const noWildcard = !resources.includes("*");
                 Object.keys(allactions).forEach(potentialaction => {
                     var matched = false;
                     statement['NotAction'].forEach(action => {
@@ -319,6 +343,13 @@ function processCustomPolicy(iam_def, tags) {
                     });
                     if (matched) {
                         return;
+                    }
+                    const resourceArnPatterns = actionToArnPattern[potentialaction];
+                    if (noWildcard) {
+                        if (resourceArnPatterns.every(pattern => resources.every(res => !pattern.test(res)))) {
+                            // Remove if all of ARN patterns do not match any of the given Resource pattern
+                            return;
+                        }
                     }
 
                     var condition = null;
