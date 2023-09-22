@@ -278,7 +278,7 @@ function processCustomPolicy(iam_def, tags) {
                     var foundmatch = false;
                     var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
                     Object.keys(allactions).forEach(potentialaction => {
-                        var re = new RegExp(matchexpression.toLowerCase());
+                        var re = new RegExp(matchexpression.toLowerCase(), "i");
                         if (potentialaction.toLowerCase().match(re)) {
                             foundmatch = true;
 
@@ -344,7 +344,7 @@ function processCustomPolicy(iam_def, tags) {
                     var matched = false;
                     statement['NotAction'].forEach(action => {
                         var matchexpression = "^" + action.replace(/\*/g, ".*").replace(/\?/g, ".{1}") + "$";
-                        var re = new RegExp(matchexpression.toLowerCase());
+                        var re = new RegExp(matchexpression.toLowerCase(), "i");
                         if (potentialaction.toLowerCase().match(re)) {
                             matched = true;
                         }
@@ -1027,6 +1027,13 @@ async function processReferencePage() {
 
     if (window.location.pathname.startsWith("/policyevaluator")) {
         $('.custompolicy').bind('input propertychange', function() {
+            clearTimeout(custom_policy_timer);
+            custom_policy_timer = setTimeout(function(){
+                processCustomPolicy(iam_def, tags);
+            }, 800);
+        });
+        
+        $('#custompolicy-considerarn').change(function() {
             clearTimeout(custom_policy_timer);
             custom_policy_timer = setTimeout(function(){
                 processCustomPolicy(iam_def, tags);
