@@ -243,7 +243,7 @@ function processCustomPolicy(iam_def, tags) {
                             // AWS Backup's recoveryPoint is the only one that has this pattern.
                             .replace("${Vendor}",service['prefix'])
                             .replace(/\*/g, "[^:]+")
-                            .replace(/\$\{[^}]+}/g, "[^:/]+"));
+                            .replace(/\$\{[^}]+}/g, "[^:/]+"), "i");
                 });
                 actionToArnPattern[service['prefix'] + ":" + privilege['privilege']] = privilege['resource_types']
                     .filter(rt => rt['resource_type'] !== "")
@@ -260,6 +260,16 @@ function processCustomPolicy(iam_def, tags) {
         var unknown_actions = []
 
         policy_json['Statement'].forEach(statement => {
+            let resources;
+            if (typeof statement['Resource'] === "string") {
+                resources = [statement['Resource']]
+            } else if (Array.isArray(statement['Resource'])) {
+                resources = statement['Resource'];
+            } else {
+                // No resource specified or invalid type
+                resources = ["*"];
+            }
+            const noWildcard = !resources.includes("*");
             if (statement['Action'] && statement['Effect'] == "Allow") {
                 if (!Array.isArray(statement['Action'])) {
                     statement['Action'] = [statement['Action']];
@@ -271,6 +281,14 @@ function processCustomPolicy(iam_def, tags) {
                         var re = new RegExp(matchexpression.toLowerCase());
                         if (potentialaction.toLowerCase().match(re)) {
                             foundmatch = true;
+
+                            const resourceArnPatterns = actionToArnPattern[potentialaction];
+                            if (noWildcard && $('#custompolicy-considerarn').is(':checked')) {
+                                if (resourceArnPatterns.every(pattern => resources.every(res => !pattern.test(res)))) {
+                                    // Skip addition if all of ARN patterns do not match any of the given Resource pattern
+                                    return;
+                                }
+                            }
                             
                             var condition = null;
                             if (statement['Condition']) {
@@ -322,16 +340,6 @@ function processCustomPolicy(iam_def, tags) {
                 if (!Array.isArray(statement['NotAction'])) {
                     statement['NotAction'] = [statement['NotAction']];
                 }
-                let resources;
-                if (typeof statement['Resource'] === "string") {
-                    resources = [statement['Resource']]
-                } else if (Array.isArray(statement['Resource'])) {
-                    resources = statement['Resource'];
-                } else {
-                    // No resource specified or invalid type
-                    resources = ["*"];
-                }
-                const noWildcard = !resources.includes("*");
                 Object.keys(allactions).forEach(potentialaction => {
                     var matched = false;
                     statement['NotAction'].forEach(action => {
@@ -345,7 +353,7 @@ function processCustomPolicy(iam_def, tags) {
                         return;
                     }
                     const resourceArnPatterns = actionToArnPattern[potentialaction];
-                    if (noWildcard) {
+                    if (noWildcard && $('#custompolicy-considerarn').is(':checked')) {
                         if (resourceArnPatterns.every(pattern => resources.every(res => !pattern.test(res)))) {
                             // Remove if all of ARN patterns do not match any of the given Resource pattern
                             return;
