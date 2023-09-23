@@ -658,10 +658,18 @@ async function processReferencePage() {
     });
 
     $(window).on('keydown', function(e) {
-        // Slash, no special keys
+        // Slash without any special keys to open search modal
         if (e.keyCode === 191 && !e.shiftKey && !e.ctrlKey && !e.ctrlKey && !e.metaKey) {
             if (!$('.navbar-search').hasClass('visible')) {
                 openSearchModal()
+                e.preventDefault();
+            }
+        }
+        // Escape without any special keys to close search modal
+        if (e.keyCode === 27 && !e.shiftKey && !e.ctrlKey && !e.ctrlKey && !e.metaKey) {
+            if ($('.navbar-search').hasClass('visible')) {
+                $('.navbar-search').removeClass('visible');
+                $('.backdrop').removeClass('show');
                 e.preventDefault();
             }
         }
