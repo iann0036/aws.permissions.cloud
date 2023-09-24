@@ -643,15 +643,37 @@ async function processReferencePage() {
         }
     }
 
-    // Search
-    $('#search-nav').on('click', function(e){
-        e.preventDefault();
+    function openSearchModal() {
         $('.navbar-search').addClass('visible');
         $('.backdrop').addClass('show');
         setTimeout(() => {
             $('.navbar-search-header > input').focus();
         }, 100);
+    }
+
+    // Search
+    $('#search-nav').on('click', function(e){
+        e.preventDefault();
+        openSearchModal()
     });
+
+    $(window).on('keydown', function(e) {
+        // Slash without any special keys to open search modal
+        if (e.keyCode === 191 && !e.shiftKey && !e.ctrlKey && !e.ctrlKey && !e.metaKey) {
+            if (!$('.navbar-search').hasClass('visible')) {
+                openSearchModal()
+                e.preventDefault();
+            }
+        }
+        // Escape without any special keys to close search modal
+        if (e.keyCode === 27 && !e.shiftKey && !e.ctrlKey && !e.ctrlKey && !e.metaKey) {
+            if ($('.navbar-search').hasClass('visible')) {
+                $('.navbar-search').removeClass('visible');
+                $('.backdrop').removeClass('show');
+                e.preventDefault();
+            }
+        }
+    })
 
     $('.navbar-search-header > input').on('input', function(e){
         let searchterm = $('.navbar-search-header > input').val().toLowerCase();
