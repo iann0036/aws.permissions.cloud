@@ -867,18 +867,18 @@ async function processReferencePage() {
     }
 
     // get primary
-    let api_prefixes = [];
+    let api_prefixes = new Set();
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
 
         if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
-            api_prefixes.push(iam_mapping_name.split(".")[0]);
+            api_prefixes.add(iam_mapping_name.split(".")[0]);
         }
     }
     let api_count = 0;
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
-        if (api_prefixes.includes(iam_mapping_name_parts[0])) {
+        if (api_prefixes.has(iam_mapping_name_parts[0])) {
             api_count += 1;
         }
     }
@@ -888,7 +888,7 @@ async function processReferencePage() {
         let method_table_content = '';
         for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
             let iam_mapping_name_parts = iam_mapping_name.split(".");
-            if (api_prefixes.includes(iam_mapping_name_parts[0])) {
+            if (api_prefixes.has(iam_mapping_name_parts[0])) {
                 let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
                 let other_actions =  sdk_map['sdk_method_iam_mappings'][iam_mapping_name].slice(1);
 
