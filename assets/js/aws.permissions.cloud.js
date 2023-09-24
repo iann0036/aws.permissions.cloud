@@ -817,107 +817,111 @@ async function processReferencePage() {
         window.location.pathname = window.location.pathname.replace("/iam/", "/api/");
     });
 
-    let actions_table_content = '';
-    for (let privilege of service['privileges']) {
-        let first_resource_type = privilege['resource_types'].shift();
+    if (window.location.pathname.startsWith("/iam/")) {
+        let actions_table_content = '';
+        for (let privilege of service['privileges']) {
+            let first_resource_type = privilege['resource_types'].shift();
 
-        let condition_keys = [];
-        for (let condition_key of first_resource_type['condition_keys']) {
-            condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
-        }
-
-        let rowspan = privilege['resource_types'].length + 1;
-        let access_class = "tx-success";
-        if (["Write", "Permissions management"].includes(privilege['access_level'])) {
-            access_class = "tx-pink";
-        }
-        if (["Unknown"].includes(privilege['access_level'])) {
-            access_class = "tx-color-03";
-        }
-
-        let used_by = getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
-
-        if (privilege['description'].substr(privilege['description'].length-1) != "." && privilege['description'].length > 1) {
-            privilege['description'] += ".";
-        }
-        
-        actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
-            <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</td>\
-            <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
-            <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
-            <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
-            <td class="tx-medium">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
-            <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
-        </tr>';
-
-        for (let resource_type of privilege['resource_types']) {
             let condition_keys = [];
-            for (let condition_key of resource_type['condition_keys']) {
+            for (let condition_key of first_resource_type['condition_keys']) {
                 condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
             }
 
-            actions_table_content += '<tr>\
-                <td class="tx-medium" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
-                <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
-            </tr>';
-        }
-    }
-    $('#actions-table tbody').append(actions_table_content);
-
-    // get primary
-    let api_prefixes = [];
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
-        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
-
-        if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
-            api_prefixes.push(iam_mapping_name.split(".")[0]);
-        }
-    }
-
-    let method_table_content = '';
-    let api_count = 0;
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
-        let iam_mapping_name_parts = iam_mapping_name.split(".");
-        if (api_prefixes.includes(iam_mapping_name_parts[0])) {
-            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
-            let other_actions =  sdk_map['sdk_method_iam_mappings'][iam_mapping_name].slice(1);
-
-            let rowspan = other_actions.length + 1;
-
-            let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
-            let template = getTemplates(first_action, iam_def_duplicate);
-            let undocumented = '';
-            if (first_action['undocumented']) {
-                undocumented = ' <span class="badge badge-danger">undocumented</span>';
+            let rowspan = privilege['resource_types'].length + 1;
+            let access_class = "tx-success";
+            if (["Write", "Permissions management"].includes(privilege['access_level'])) {
+                access_class = "tx-pink";
+            }
+            if (["Unknown"].includes(privilege['access_level'])) {
+                access_class = "tx-color-03";
             }
 
-            method_table_content += '<tr id="' + iam_mapping_name_parts[0] + '_' + iam_mapping_name_parts[1] + '">\
-                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
-                <td rowspan="' + rowspan + '" class="tx-normal">' + shortDocs(iam_mapping_name, docs) + '</td>\
-                <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
-                <td class="tx-medium">' + template + '</td>\
+            let used_by = getUsedBy(service['prefix'] + ':' + privilege['privilege'], sdk_map);
+
+            if (privilege['description'].substr(privilege['description'].length - 1) != "." && privilege['description'].length > 1) {
+                privilege['description'] += ".";
+            }
+
+            actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
+                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
+                <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
+                <td class="tx-medium">' + expand_resource_type(service, first_resource_type['resource_type']) + '</td>\
+                <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
             </tr>';
 
-            for (let action of other_actions) {
-                let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
-                let template = getTemplates(action, iam_def_duplicate);
+            for (let resource_type of privilege['resource_types']) {
+                let condition_keys = [];
+                for (let condition_key of resource_type['condition_keys']) {
+                    condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                }
+
+                actions_table_content += '<tr>\
+                    <td class="tx-medium" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
+                    <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
+                </tr>';
+            }
+        }
+        $('#actions-table tbody').append(actions_table_content);
+    }
+
+    if (window.location.pathname.startsWith("/api/")) {
+        // get primary
+        let api_prefixes = [];
+        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
+
+            if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
+                api_prefixes.push(iam_mapping_name.split(".")[0]);
+            }
+        }
+
+        let method_table_content = '';
+        let api_count = 0;
+        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+            let iam_mapping_name_parts = iam_mapping_name.split(".");
+            if (api_prefixes.includes(iam_mapping_name_parts[0])) {
+                let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
+                let other_actions =  sdk_map['sdk_method_iam_mappings'][iam_mapping_name].slice(1);
+
+                let rowspan = other_actions.length + 1;
+
+                let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
+                let template = getTemplates(first_action, iam_def_duplicate);
                 let undocumented = '';
-                if (action['undocumented']) {
+                if (first_action['undocumented']) {
                     undocumented = ' <span class="badge badge-danger">undocumented</span>';
                 }
 
-                method_table_content += '<tr>\
-                    <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + undocumented + '</a></td>\
+                method_table_content += '<tr id="' + iam_mapping_name_parts[0] + '_' + iam_mapping_name_parts[1] + '">\
+                    <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
+                    <td rowspan="' + rowspan + '" class="tx-normal">' + shortDocs(iam_mapping_name, docs) + '</td>\
+                    <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
                     <td class="tx-medium">' + template + '</td>\
                 </tr>';
+
+                for (let action of other_actions) {
+                    let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
+                    let template = getTemplates(action, iam_def_duplicate);
+                    let undocumented = '';
+                    if (action['undocumented']) {
+                        undocumented = ' <span class="badge badge-danger">undocumented</span>';
+                    }
+
+                    method_table_content += '<tr>\
+                        <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + undocumented + '</a></td>\
+                        <td class="tx-medium">' + template + '</td>\
+                    </tr>';
+                }
+
+                api_count += 1;
             }
-
-            api_count += 1;
         }
-    }
 
-    $('.api-count').html(api_count.toString());
-    $('#methods-table tbody').append(method_table_content);
+        $('.api-count').html(api_count.toString());
+        $('#methods-table tbody').append(method_table_content);
+    }
 
     // by tag
     if (window.location.pathname.startsWith("/tag")) {
