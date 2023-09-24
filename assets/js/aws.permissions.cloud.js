@@ -131,16 +131,22 @@ function getTemplates(action, iam_def) {
     return ret;
 }
 
+let privilege_to_iam_mapping_name = null;
 function getUsedBy(privilege, sdk_map) {
-    let used_by_methods = [];
-
-    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
-        for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
-            if (action['action'] == privilege) {
-                used_by_methods.push("<a href=\"/api/" + sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0]['action'].split(":")[0] + "#" + iam_mapping_name.replace(".", "_") + "\">" + iam_mapping_name + "</a>");
+    if (privilege_to_iam_mapping_name === null) {
+        privilege_to_iam_mapping_name = {}
+        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+            for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+                if (privilege_to_iam_mapping_name[action['action']] == null) {
+                    privilege_to_iam_mapping_name[action['action']] = [];
+                }
+                privilege_to_iam_mapping_name[action['action']].push(iam_mapping_name)
             }
         }
     }
+    let used_by_methods = (privilege_to_iam_mapping_name[privilege] || []).map(iam_mapping_name => {
+        return "<a href=\"/api/" + sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0]['action'].split(":")[0] + "#" + iam_mapping_name.replace(".", "_") + "\">" + iam_mapping_name + "</a>";
+    });
 
     if (used_by_methods.length) {
         used_by_methods = [...new Set(used_by_methods)]; // dedupe
