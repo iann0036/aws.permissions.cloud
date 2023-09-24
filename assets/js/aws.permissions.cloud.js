@@ -866,19 +866,26 @@ async function processReferencePage() {
         $('#actions-table tbody').append(actions_table_content);
     }
 
-    if (window.location.pathname.startsWith("/api/")) {
-        // get primary
-        let api_prefixes = [];
-        for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
-            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
+    // get primary
+    let api_prefixes = [];
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+        let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
 
-            if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
-                api_prefixes.push(iam_mapping_name.split(".")[0]);
-            }
+        if (first_action['action'].split(":")[0] == service['prefix']) { // TODO: better matching
+            api_prefixes.push(iam_mapping_name.split(".")[0]);
         }
+    }
+    let api_count = 0;
+    for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
+        let iam_mapping_name_parts = iam_mapping_name.split(".");
+        if (api_prefixes.includes(iam_mapping_name_parts[0])) {
+            api_count += 1;
+        }
+    }
+    $('.api-count').html(api_count.toString());
 
+    if (window.location.pathname.startsWith("/api/")) {
         let method_table_content = '';
-        let api_count = 0;
         for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
             let iam_mapping_name_parts = iam_mapping_name.split(".");
             if (api_prefixes.includes(iam_mapping_name_parts[0])) {
@@ -914,12 +921,8 @@ async function processReferencePage() {
                         <td class="tx-medium">' + template + '</td>\
                     </tr>';
                 }
-
-                api_count += 1;
             }
         }
-
-        $('.api-count').html(api_count.toString());
         $('#methods-table tbody').append(method_table_content);
     }
 
