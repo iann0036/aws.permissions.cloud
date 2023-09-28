@@ -879,9 +879,10 @@ async function processReferencePage() {
     for (let iam_mapping_name of Object.keys(sdk_map['sdk_method_iam_mappings']).sort()) {
         let iam_mapping_name_parts = iam_mapping_name.split(".");
         if (api_prefixes.includes(iam_mapping_name_parts[0])) {
-            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].shift();
+            let first_action = sdk_map['sdk_method_iam_mappings'][iam_mapping_name][0];
+            let other_actions =  sdk_map['sdk_method_iam_mappings'][iam_mapping_name].slice(1);
 
-            let rowspan = sdk_map['sdk_method_iam_mappings'][iam_mapping_name].length + 1;
+            let rowspan = other_actions.length + 1;
 
             let actionlink = "/iam/" + first_action['action'].split(":")[0] + "#" + first_action['action'].replace(":", "-");
             let template = getTemplates(first_action, iam_def_duplicate);
@@ -897,7 +898,7 @@ async function processReferencePage() {
                 <td class="tx-medium">' + template + '</td>\
             </tr>';
 
-            for (let action of sdk_map['sdk_method_iam_mappings'][iam_mapping_name]) {
+            for (let action of other_actions) {
                 let actionlink = "/iam/" + action['action'].split(":")[0] + "#" + action['action'].replace(":", "-");
                 let template = getTemplates(action, iam_def_duplicate);
                 let undocumented = '';
