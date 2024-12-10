@@ -40,7 +40,7 @@ function shortDocs(method, docs) {
         return "-";
     }
 
-    let ret = docs[method].replace("</p>", " . ").replace(/(<([^>]+)>)/gi, "").split(". ")[0];
+    let ret = docs[method].replace(/<note>.+<\/note>/gi, "").replace("</p>", " . ").replace(/(<([^>]+)>)/gi, "").split(". ")[0].trim();
 
     if (ret.substr(ret.length-1) != ".") {
         ret += ".";
