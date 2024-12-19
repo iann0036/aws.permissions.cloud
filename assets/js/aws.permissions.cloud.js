@@ -627,7 +627,7 @@ async function processReferencePage() {
     let tags_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/tags.json');
     let tags = await tags_data.json();
 
-    const managedpolicies_data = await fetch('https://aws.permissions.cloud/iam-dataset/main/aws/managed_policies.json');
+    const managedpolicies_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/managed_policies.json');
     const managedpolicies = await managedpolicies_data.json();
     for (const managedpolicy of managedpolicies['policies']) {
         // Enrich for search
@@ -1049,12 +1049,12 @@ async function processReferencePage() {
         </tr>';
 
         if (window.location.pathname.startsWith("/managedpolicies/") && managedpolicy['name'] == window.location.pathname.replace("/managedpolicies/", "")) {
-            let policy = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/managedpolicies/' + managedpolicy['name'] + '.json');
+            let policy = await fetch('https://aws.permissions.cloud/iann0036/iam-dataset/aws/managedpolicies/' + managedpolicy['name'] + '.json');
             let policy_data = await policy.json();
             $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
             $('.managedpolicyname').html(managedpolicy['name']);
             processManagedPolicy(policy_data, iam_def);
-            $('#managedpolicy-json-link').attr('href', 'https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/managedpolicies/' + managedpolicy['name'] + '.json');
+            $('#managedpolicy-json-link').attr('href', 'https://aws.permissions.cloud/iann0036/iam-dataset/aws/managedpolicies/' + managedpolicy['name'] + '.json');
         }
     }
 
