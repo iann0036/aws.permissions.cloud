@@ -1054,7 +1054,7 @@ async function processReferencePage() {
             $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
             $('.managedpolicyname').html(managedpolicy['name']);
             processManagedPolicy(policy_data, iam_def);
-            $('#managedpolicy-json-link').attr('href', 'https://aws.permissions.cloud/iam-dataset/aws/managedpolicies/' + managedpolicy['name'] + '.json');
+            $('#managedpolicy-json-link').attr('href', 'https://raw.githubusercontent.com/iann0036/iam-dataset/refs/heads/main/aws/managedpolicies/' + managedpolicy['name'] + '.json');
         }
     }
 
