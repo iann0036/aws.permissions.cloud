@@ -445,7 +445,7 @@ function addcomma(val) {
 async function addDashboardData(iam_def, sdk_map) {
     if (window.location.pathname !== "/") return;
 
-    let counts_data = await fetch('https://iann0036.github.io/iam-dataset/aws/historic_counts.json');
+    let counts_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/historic_counts.json');
     let counts = await counts_data.json();
 
     let now = Math.round(new Date() / 1000);
@@ -613,21 +613,21 @@ function getQueryVariable(variable) {
 }
 
 async function processReferencePage() {
-    const iam_def_data = await fetch('https://iann0036.github.io/iam-dataset/aws/iam_definition.json');
+    const iam_def_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/iam_definition.json');
     var iam_def = await iam_def_data.json();
     const iam_def_duplicate = JSON.parse(JSON.stringify(iam_def));
     let service = iam_def[0];
 
-    let sdk_map_data = await fetch('https://iann0036.github.io/iam-dataset/aws/map.json');
+    let sdk_map_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/map.json');
     let sdk_map = await sdk_map_data.json();
 
-    let docs_data = await fetch('https://iann0036.github.io/iam-dataset/aws/docs.json');
+    let docs_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/docs.json');
     let docs = await docs_data.json();
 
-    let tags_data = await fetch('https://iann0036.github.io/iam-dataset/aws/tags.json');
+    let tags_data = await fetch('https://aws.permissions.cloud/iam-dataset/aws/tags.json');
     let tags = await tags_data.json();
 
-    const managedpolicies_data = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/managed_policies.json');
+    const managedpolicies_data = await fetch('https://aws.permissions.cloud/iam-dataset/main/aws/managed_policies.json');
     const managedpolicies = await managedpolicies_data.json();
     for (const managedpolicy of managedpolicies['policies']) {
         // Enrich for search
