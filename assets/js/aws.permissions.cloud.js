@@ -2,7 +2,13 @@
 
 var custom_policy_timer;
 
+function escapeRegex(string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
+    arn = escapeRegex(arn);
+
     if (action['resource_mappings'] && resource_mapping_sub) {
         if (resource_type_name && action['resourcearn_mappings']) {
             for (var resourcearn_mapping_name of Object.keys(action['resourcearn_mappings'])) {
@@ -245,7 +251,7 @@ function processCustomPolicy(iam_def, tags) {
                 const resourceNameToArnPattern = {};
                 service['resources'].forEach(res => {
                     resourceNameToArnPattern[res['resource']] = new RegExp(
-                        res['arn']
+                        escapeRegex(res['arn'])
                             // AWS Backup's recoveryPoint is the only one that has this pattern.
                             .replace("${Vendor}",service['prefix'])
                             .replace(/\*/g, "[^:]+")
