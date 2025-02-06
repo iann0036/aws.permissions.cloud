@@ -3,7 +3,7 @@
 var custom_policy_timer;
 
 function escapeRegex(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+    return string.replace(/[/\-\\^*+?.()|[\]]/g, '\\$&');
 }
 
 function arnReplace(arn, action, resource_mapping_sub, resource_type_name) {
