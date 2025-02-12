@@ -924,7 +924,7 @@ async function processReferencePage() {
 
                 let notice = '';
                 if (first_action['notice']) {
-                    notice = ' <span class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + first_action['notice'] + '"><i data-feather="info"></i></span>';
+                    notice = ' <span class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + first_action['notice'] + '"><i class="fas fa-info-circle"></i></span>';
                 }
 
                 method_table_content += '<tr id="' + iam_mapping_name_parts[0] + '_' + iam_mapping_name_parts[1] + '">\
@@ -944,7 +944,7 @@ async function processReferencePage() {
 
                     let notice = '';
                     if (action['notice']) {
-                        notice = ' <span class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + action['notice'] + '"><i data-feather="info"></i></span>';
+                        notice = ' <span class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + action['notice'] + '"><i class="fas fa-info-circle"></i></span>';
                     }
 
                     method_table_content += '<tr>\
@@ -955,8 +955,6 @@ async function processReferencePage() {
             }
         }
         $('#methods-table tbody').append(method_table_content);
-
-        feather.replace();
     }
 
     // by tag
