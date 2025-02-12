@@ -952,11 +952,11 @@ async function processReferencePage() {
                         <td class="tx-medium">' + template + '</td>\
                     </tr>';
                 }
-
-                feather.replace();
             }
         }
         $('#methods-table tbody').append(method_table_content);
+
+        feather.replace();
     }
 
     // by tag
