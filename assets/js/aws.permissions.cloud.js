@@ -937,8 +937,13 @@ async function processReferencePage() {
                         undocumented = ' <span class="badge badge-danger">undocumented</span>';
                     }
 
+                    let notice = '';
+                    if (action['notice']) {
+                        notice = ' <p class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + action['notice'] + '"><i data-feather="info"></i></p>';
+                    }
+
                     method_table_content += '<tr>\
-                        <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + undocumented + '</a></td>\
+                        <td class="tx-medium" style="padding-left: 10px !important;"><a href="' + actionlink + '">' + action['action'] + undocumented + '</a>' + notice + '</td>\
                         <td class="tx-medium">' + template + '</td>\
                     </tr>';
                 }
