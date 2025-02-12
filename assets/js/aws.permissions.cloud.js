@@ -922,10 +922,15 @@ async function processReferencePage() {
                     undocumented = ' <span class="badge badge-danger">undocumented</span>';
                 }
 
+                let notice = '';
+                if (first_action['notice']) {
+                    notice = ' <p class="tx-primary" data-toggle="tooltip" data-placement="top" title="' + action['notice'] + '"><i data-feather="info"></i></p>';
+                }
+
                 method_table_content += '<tr id="' + iam_mapping_name_parts[0] + '_' + iam_mapping_name_parts[1] + '">\
                     <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + iam_mapping_name_parts[0] + '.</span>' + iam_mapping_name_parts[1] + '</td>\
                     <td rowspan="' + rowspan + '" class="tx-normal">' + shortDocs(iam_mapping_name, docs) + '</td>\
-                    <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a></td>\
+                    <td class="tx-medium"><a href="' + actionlink + '">' + first_action['action'] + undocumented + '</a>' + notice + '</td>\
                     <td class="tx-medium">' + template + '</td>\
                 </tr>';
 
