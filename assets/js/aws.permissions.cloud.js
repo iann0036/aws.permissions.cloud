@@ -874,7 +874,7 @@ async function processReferencePage() {
             }
 
             actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
-                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + '</td>\
+                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + ' <button class="btn btn-xs btn-icon btn-copy" onclick="copyToClipboard(\'' + service['prefix'] + ':' + privilege['privilege'] + '\')"><i class="fas fa-copy"></i></button></td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
                 <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
@@ -1125,3 +1125,17 @@ async function processReferencePage() {
 }
 
 processReferencePage();
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show success feedback
+        const button = event.target.closest('.btn-copy');
+        const originalIcon = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            button.innerHTML = originalIcon;
+        }, 1000);
+    }).catch(function(err) {
+        console.error('Failed to copy text: ', err);
+    });
+}
