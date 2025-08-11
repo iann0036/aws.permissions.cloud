@@ -874,7 +874,7 @@ async function processReferencePage() {
             }
 
             actions_table_content += '<tr id="' + service['prefix'] + '-' + privilege['privilege'] + '">\
-                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + ' <button class="btn btn-xs btn-icon btn-copy" onclick="copyToClipboard(\'' + service['prefix'] + ':' + privilege['privilege'] + '\')"><i class="fas fa-copy"></i></button></td>\
+                <td rowspan="' + rowspan + '" class="tx-medium"><span class="tx-color-03">' + service['prefix'] + ':</span>' + privilege['privilege'] + (privilege['access_level'] == "Unknown" ? ' <span class="badge badge-danger">undocumented</span>' : '') + ' <button class="btn btn-xs btn-icon btn-copy" onclick="copyToClipboard(\'' + service['prefix'] + ':' + privilege['privilege'] + '\')"><span class="tx-color-03"><i class="fas fa-copy"></i></span></button></td>\
                 <td rowspan="' + rowspan + '" class="tx-normal">' + privilege['description'] + '</td>\
                 <td rowspan="' + rowspan + '" class="tx-medium">' + used_by + '</td>\
                 <td rowspan="' + rowspan + '" class="' + access_class + '">' + privilege['access_level'] + '</td>\
