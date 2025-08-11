@@ -700,9 +700,24 @@ async function processReferencePage() {
     $('.navbar-search-header > input').on('input', function(e){
         let searchterm = $('.navbar-search-header > input').val().toLowerCase();
 
-        // IAM
+        // SERVICES
         let html = '';
         let results = [];
+        for (let service of iam_def) {
+                if (service['service_name'].toLowerCase().includes(searchterm) || service['prefix'].toLowerCase().includes(searchterm)) {
+			results.push(`${service["prefix"]}:${service["service_name"]}`);
+                }
+            if (results.length >= 10) break;
+        }
+        for (let i=0; i<results.length && i<10; i++) {
+            html += `<li style=\"margin-left: 5px; margin-top: 5px;\"><a href=\"/iam/${results[i].split(":")[0]}\">${results[i].split(":")[1]}</a></li>`;
+        };
+        $('#search-service-list').html(html);
+
+
+        // IAM
+        html = '';
+        results = [];
         for (let service of iam_def) {
             for (let privilege of service['privileges']) {
                 let fullpriv = service['prefix'] + ":" + privilege['privilege'];
@@ -1060,7 +1075,7 @@ async function processReferencePage() {
         </tr>';
 
         if (window.location.pathname.startsWith("/managedpolicies/") && managedpolicy['name'] == window.location.pathname.replace("/managedpolicies/", "")) {
-            let policy = await fetch('https://aws.permissions.cloud/iam-dataset/aws/managedpolicies/' + managedpolicy['name'] + '.json');
+            let policy = await fetch('/iam-dataset/aws/managedpolicies/' + managedpolicy['name'] + '.json');
             let policy_data = await policy.json();
             $('.managedpolicyraw').html(Prism.highlight(JSON.stringify(policy_data['document'], null, 4), Prism.languages.javascript, 'javascript'));
             $('.managedpolicyname').html(managedpolicy['name']);
