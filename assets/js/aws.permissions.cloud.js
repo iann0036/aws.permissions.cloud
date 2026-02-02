@@ -888,6 +888,17 @@ async function processReferencePage() {
                     condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
                 }
 
+                // Also look through service['resources'] for the additionally included condition keys for that resource type
+                for (let res of service['resources']) {
+                    if (res['resource'] == resource_type['resource_type'].replace("*", "")) {
+                        for (let additional_condition_key of res['condition_keys']) {
+                            if (!condition_keys.includes('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>')) {
+                                condition_keys.push('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>');
+                            }
+                        }
+                    }
+                }
+
                 actions_table_content += '<tr>\
                     <td class="tx-medium" style="padding-left: 10px !important;">' + expand_resource_type(service, resource_type['resource_type']) + '</td>\
                     <td class="tx-medium">' + condition_keys.join("<br />") + '</td>\
@@ -1022,6 +1033,17 @@ async function processReferencePage() {
                         let condition_keys = [];
                         for (let condition_key of resource_type['condition_keys']) {
                             condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                        }
+
+                        // Also look through iam_def[i]['resources'] for the additionally included condition keys for that resource type
+                        for (let res of iam_def[i]['resources']) {
+                            if (res['resource'] == resource_type['resource_type'].replace("*", "")) {
+                                for (let additional_condition_key of res['condition_keys']) {
+                                    if (!condition_keys.includes('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>')) {
+                                        condition_keys.push('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>');
+                                    }
+                                }
+                            }
                         }
 
                         bytag_actions_table_content += '<tr>\
