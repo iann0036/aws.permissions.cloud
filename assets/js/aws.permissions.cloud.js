@@ -858,6 +858,17 @@ async function processReferencePage() {
                 condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
             }
 
+            // Also look through service['resources'] for the additionally included condition keys for that resource type
+            for (let res of service['resources']) {
+                if (res['resource'] == first_resource_type['resource_type'].replace("*", "")) {
+                    for (let additional_condition_key of res['condition_keys']) {
+                        if (!condition_keys.includes('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>')) {
+                            condition_keys.push('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>');
+                        }
+                    }
+                }
+            }
+
             let rowspan = privilege['resource_types'].length + 1;
             let access_class = "tx-success";
             if (["Write", "Permissions management"].includes(privilege['access_level'])) {
@@ -1003,6 +1014,17 @@ async function processReferencePage() {
                     let condition_keys = [];
                     for (let condition_key of first_resource_type['condition_keys']) {
                         condition_keys.push('<a href="/tag/' + condition_key + '">' + condition_key + '</a>');
+                    }
+
+                    // Also look through iam_def[i]['resources'] for the additionally included condition keys for that resource type
+                    for (let res of iam_def[i]['resources']) {
+                        if (res['resource'] == first_resource_type['resource_type'].replace("*", "")) {
+                            for (let additional_condition_key of res['condition_keys']) {
+                                if (!condition_keys.includes('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>')) {
+                                    condition_keys.push('<a href="/tag/' + additional_condition_key + '">' + additional_condition_key + '</a>');
+                                }
+                            }
+                        }
                     }
 
                     let rowspan = privilege['resource_types'].length + 1;
